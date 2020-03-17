@@ -8,6 +8,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
 	state: {
+		allUsers: [],
 		chatrooms: [],
 		newChatroom: '',
 		user: null,
@@ -84,6 +85,14 @@ export default new Vuex.Store({
 					state.status = 'error'
 					console.log(err)
 				})
+		},
+
+		setAllUsers(state, value) {
+			state.allUsers = value
+		},
+
+		setFriends(state, value) {
+			state.user.friends = value
 		}
 	},
 
@@ -122,6 +131,71 @@ export default new Vuex.Store({
 				})
 		},
 
+		addNewFriend({ commit, state }, friendId) {
+			commit('setStatus', 'loading')
+
+			db.collection('contacts')
+				.doc(state.user.id)
+				.set(
+					{
+						[friendId.id]: true
+					},
+					{ merge: true }
+				)
+				.then(() => {
+					commit('setStatus', 'success')
+				})
+		},
+
+		getFriendsArray({ dispatch, commit, state }) {
+			return new Promise((resolve, reject) => {
+				let friendId = []
+				commit('setStatus', 'loading')
+				db.collection('contacts')
+					.doc(state.user.id)
+					.onSnapshot(doc => {
+						if (doc.data()) {
+							friendId = Object.keys(doc.data())
+							return dispatch('getFriendsData', friendId)
+								.then(() => {
+									resolve()
+								})
+								.catch(() => {
+									reject()
+								})
+						}
+					})
+			})
+		},
+
+		getFriendsData({ commit }, friendIds) {
+			let friendDataArray = []
+			return new Promise((resolve, reject) => {
+				if (friendIds.length > 0) {
+					friendIds.forEach(friendId => {
+						db.collection('users')
+							.doc(friendId)
+							.get()
+							.then(friendData => {
+								friendDataArray.push({
+									id: friendData.id,
+									...friendData.data()
+								})
+							})
+							.then(() => {
+								commit('setFriends', friendDataArray)
+								resolve()
+							})
+							.catch(() => {
+								reject()
+							})
+					})
+				} else {
+					commit('setFriends', [])
+				}
+			})
+		},
+
 		addNewChatroom(context) {
 			context.commit('addNewChatroom')
 			context.commit('setNewChatroom', '')
@@ -137,7 +211,6 @@ export default new Vuex.Store({
 				.doc(context.state.user.id)
 
 				.onSnapshot(roomIds => {
-					console.log(roomIds.data())
 					if (!roomIds.data()) {
 						return
 					}
@@ -161,7 +234,9 @@ export default new Vuex.Store({
 				.auth()
 				.signInWithEmailAndPassword(value.email, value.password)
 				.then(() => {
-					dispatch('checkUser')
+					return dispatch('checkUser').then(() => {
+						return dispatch('getFriendsArray')
+					})
 				})
 		},
 
@@ -175,20 +250,37 @@ export default new Vuex.Store({
 		},
 
 		checkUser(context) {
-			firebase.auth().onAuthStateChanged(user => {
-				if (user) {
-					db.collection('users')
-						.doc(user.uid)
-						.get()
-						.then(response => {
-							context.commit('setUser', response.data())
-						})
-						.then(() => {
-							router.push('/profile/' + context.state.user.id)
-						})
-				} else {
-					console.log('Hello')
-				}
+			return new Promise((resolve, reject) => {
+				firebase.auth().onAuthStateChanged(user => {
+					if (user) {
+						db.collection('users')
+							.doc(user.uid)
+							.get()
+							.then(response => {
+								context.commit('setUser', response.data())
+							})
+							.then(() => {
+								router.push('/profile/' + context.state.user.id)
+							})
+							.then(() => {
+								resolve()
+							})
+							.catch(() => {
+								reject()
+							})
+					}
+				})
+			})
+		},
+
+		allUsers(context) {
+			db.collection('users').onSnapshot(users => {
+				let allUsers = []
+				allUsers = []
+				users.forEach(user => {
+					allUsers.push(user.data())
+				})
+				context.commit('setAllUsers', allUsers)
 			})
 		}
 	},

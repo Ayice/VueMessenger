@@ -32,6 +32,7 @@
 
 	export default {
 		name: 'Chatroom',
+		props: ['id'],
 		data() {
 			return {
 				chatroom: null,

@@ -24,6 +24,8 @@
 
 <style lang="scss">
 	.app {
+		max-width: 950px;
+		margin: 0 auto;
 		font-family: Avenir, Helvetica, Arial, sans-serif;
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
@@ -32,6 +34,7 @@
 	}
 
 	.nav {
+		text-align: center;
 		padding: 30px;
 
 		a {

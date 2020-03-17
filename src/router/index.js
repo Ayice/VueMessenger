@@ -27,6 +27,7 @@ const router = new Router({
 		{
 			path: '/chatroom/:id',
 			name: 'Chatroom',
+			props: true,
 
 			component: () =>
 				import(/* webpackChunkName: "chatroom" */ '../components/ChatRoom.vue')
@@ -41,6 +42,7 @@ const router = new Router({
 		{
 			path: '/profile/:id',
 			name: 'Profile',
+			props: true,
 
 			component: () =>
 				import(/* webpackChunkName: "profile" */ '../components/Profile.vue')
