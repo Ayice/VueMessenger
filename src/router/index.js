@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '../views/Home.vue'
 import store from '../store'
+// import RightSection from '../components/Right'
 
 Vue.use(Router)
 
@@ -13,24 +14,24 @@ const router = new Router({
 		{
 			path: '/',
 			name: 'Home',
-			component: Home
-		},
-		{
-			path: '/about',
-			name: 'About',
-			// route level code-splitting
-			// this generates a separate chunk (about.[hash].js) for this route
-			// which is lazy-loaded when the route is visited.
-			component: () =>
-				import(/* webpackChunkName: "about" */ '../views/About.vue')
-		},
-		{
-			path: '/chatroom/:id',
-			name: 'Chatroom',
-			props: true,
+			component: Home,
+			children: [
+				{
+					path: '/chatroom/:id',
+					name: 'Chatroom',
+					props: true,
 
-			component: () =>
-				import(/* webpackChunkName: "chatroom" */ '../components/ChatRoom.vue')
+					component: () =>
+						import(
+							/* webpackChunkName: "chatroom" */ '../components/ChatRoom.vue'
+						)
+				}
+				// {
+				// 	path: '/',
+				// 	component: RightSection,
+				// 	children: []
+				// }
+			]
 		},
 		{
 			path: '/signup',
@@ -51,7 +52,7 @@ const router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
-	if (to.path == '/profile/') {
+	if (to.path !== '/') {
 		if (!store.state.user) {
 			next('/')
 		}

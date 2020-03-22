@@ -13,12 +13,15 @@ export default new Vuex.Store({
 		newChatroom: '',
 		user: null,
 		status: null,
+		friends: [],
 		newUser: {
 			name: '',
 			username: '',
 			password: '',
 			email: ''
-		}
+		},
+		currentChatroom: {},
+		currentChatroomMessages: []
 	},
 	mutations: {
 		setNewUserEmail(state, value) {
@@ -55,36 +58,7 @@ export default new Vuex.Store({
 
 		setUserLogOut(state) {
 			state.user = null
-		},
-
-		addNewChatroom(state) {
-			db.collection('chatrooms')
-				.add({
-					name: state.newChatroom
-				})
-				.then(chatroomData => {
-					db.collection('user-rooms')
-						.doc(state.user.id)
-						.set(
-							{
-								[chatroomData.id]: true
-							},
-							{ merge: true }
-						)
-				})
-		},
-
-		removeChatroom(state, value) {
-			db.collection('chatrooms')
-				.doc(value.id)
-				.delete()
-				.then(() => {
-					console.log('Deleted Chatroom')
-				})
-				.catch(err => {
-					state.status = 'error'
-					console.log(err)
-				})
+			state.friends = null
 		},
 
 		setAllUsers(state, value) {
@@ -92,11 +66,25 @@ export default new Vuex.Store({
 		},
 
 		setFriends(state, value) {
-			state.user.friends = value
+			state.friends = value
+		},
+
+		setCurrentChatroom(state, value) {
+			state.currentChatroom = value
+		},
+
+		setCurrentChatroomMessages(state, value) {
+			state.currentChatroomMessages = value
 		}
 	},
 
 	actions: {
+		/**
+		 *
+		 * Handling creation of users
+		 *
+		 */
+
 		addNewUser(context) {
 			firebase
 				.auth()
@@ -131,59 +119,162 @@ export default new Vuex.Store({
 				})
 		},
 
-		addNewFriend({ commit, state }, friendId) {
-			commit('setStatus', 'loading')
+		/**
+		 *
+		 * Handling login/out
+		 *
+		 */
 
-			db.collection('contacts')
-				.doc(state.user.id)
-				.set(
-					{
-						[friendId.id]: true
-					},
-					{ merge: true }
-				)
-				.then(() => {
-					commit('setStatus', 'success')
+		// Handle userLogin
+		login({ commit }, value) {
+			// Wait for our Firebase response
+			firebase
+				.auth()
+				.signInWithEmailAndPassword(value.email, value.password)
+
+				.catch(() => {
+					return commit('setStatus', 'error')
 				})
 		},
 
-		getFriendsArray({ dispatch, commit, state }) {
+		// Handle logout
+		logout() {
+			// Firebase function
+			firebase.auth().signOut()
+		},
+
+		// Handling our user that is logged in
+		checkUser({ commit }, user) {
+			// Returning promise, so our login action from earlier know
+			// when this is done.
 			return new Promise((resolve, reject) => {
-				let friendId = []
-				commit('setStatus', 'loading')
-				db.collection('contacts')
-					.doc(state.user.id)
-					.onSnapshot(doc => {
-						if (doc.data()) {
-							friendId = Object.keys(doc.data())
-							return dispatch('getFriendsData', friendId)
-								.then(() => {
-									resolve()
-								})
-								.catch(() => {
-									reject()
-								})
-						}
+				db.collection('users')
+					.doc(user.uid)
+					.get()
+					.then(response => {
+						// Commit mutation, with our user's data
+						commit('setUser', response.data())
+					})
+					.then(() => {
+						// Resolve so our Login action can continue
+						resolve()
+					})
+					.catch(() => {
+						commit('setStatus', 'error')
+						reject()
 					})
 			})
 		},
 
-		getFriendsData({ commit }, friendIds) {
+		/**
+		 *
+		 * Handling friends/contacts
+		 *
+		 */
+
+		//  Handling new friend request
+		addNewFriend({ commit, state }, friendId) {
+			commit('setStatus', 'loading')
+
+			db.collection('contacts')
+				// Using current user's id to find the right doc
+				.doc(state.user.id)
+				.set(
+					{
+						// [] lets Firebase know that it is a variable we are referencing
+						// And the key should NOT be "friendId.id"
+						[friendId.id]: true
+					},
+					// Merge to tell Firebase, that this should not erase
+					// other data in the document
+					{ merge: true }
+				)
+				// Then we do pretty much the same thing, but in the
+				// new friend's document
+				.then(() => {
+					db.collection('contacts')
+						.doc(friendId.id)
+						.set(
+							{
+								[state.user.id]: true
+							},
+							{ merge: true }
+						)
+				})
+				.then(() => {
+					commit('setStatus', 'success')
+				})
+				.catch(err => {
+					console.log(err)
+					commit('setStatus', 'error')
+				})
+		},
+
+		// Fetchin the user's friends
+		async getFriendsArray({ commit, dispatch, state }) {
+			commit('setStatus', 'loading')
+			return new Promise((resolve, reject) => {
+				// Creating an array for future need
+				let friendId = []
+				db.collection('contacts')
+					.doc(state.user.id)
+					// onSnapShot creates a listener to this document, and will
+					// detect changes
+					.onSnapshot(async doc => {
+						// Check if our doc.data() is undefined, because then we will have no friends...
+						if (doc.data() !== undefined) {
+							// We only need the keys from our Db, because we here have the ids
+							friendId = Object.keys(doc.data())
+							// When we are fetching our friends, we dont want a user to see him self
+							// If he added himself some kind of way ???
+							const filteredFriendId = friendId.filter(x => x !== state.user.id)
+							// We only have the ids of the user's friends
+							// So now we are running another action to get the data
+							return dispatch('getFriendsData', filteredFriendId)
+								.then(() => {
+									resolve()
+								})
+								.catch(() => {
+									commit('setStatus', 'error')
+									reject()
+								})
+						} else {
+							// If our response from Firebase is empty just resolve
+							commit('setFriends', [])
+							resolve()
+						}
+					})
+			}).then(() => {
+				commit('setStatus', 'success')
+			})
+		},
+
+		// Get data of current user's friends
+		getFriendsData({ commit, dispatch }, friendIds) {
 			let friendDataArray = []
 			return new Promise((resolve, reject) => {
+				// Checking if the data we get is empty
+				// But i won't
 				if (friendIds.length > 0) {
+					// For every of the id, we need to fetch the data from Firebase
 					friendIds.forEach(friendId => {
 						db.collection('users')
 							.doc(friendId)
 							.get()
 							.then(friendData => {
+								// After we get a friend's data
+								// we push it into an array
 								friendDataArray.push({
 									id: friendData.id,
 									...friendData.data()
 								})
 							})
 							.then(() => {
+								// Commit a mutation, that sets the friends of the current user
 								commit('setFriends', friendDataArray)
+								// Run another action
+								dispatch('allUsers')
+								// Now resolve so our other actions know we are done
 								resolve()
 							})
 							.catch(() => {
@@ -191,98 +282,230 @@ export default new Vuex.Store({
 							})
 					})
 				} else {
+					// If the data we are getting is empty
+					// Commit the mutation, with an empty array
 					commit('setFriends', [])
+					resolve()
 				}
 			})
 		},
 
-		addNewChatroom(context) {
-			context.commit('addNewChatroom')
-			context.commit('setNewChatroom', '')
+		removeFriend({ commit, state }, friendId) {
+			commit('setStatus', 'loading')
+			db.collection('contacts')
+				.doc(state.user.id)
+				.update({
+					[friendId]: firebase.firestore.FieldValue.delete()
+				})
+				.then(() => {
+					db.collection('contacts')
+						.doc(friendId)
+						.update({
+							[state.user.id]: firebase.firestore.FieldValue.delete()
+						})
+				})
+				.then(() => {
+					commit('setStatus', 'success')
+				})
+				.catch(err => {
+					commit('setStatus', 'error')
+					console.log(err)
+				})
 		},
 
-		removeChatroom(context, value) {
-			context.commit('removeChatroom', value)
+		/**
+		 *
+		 * Handle all chatroom calls
+		 *
+		 */
+
+		addNewChatroom({ commit, state }) {
+			commit('setStatus', 'loading')
+			db.collection('chatrooms')
+				.add({
+					name: state.newChatroom
+				})
+				.then(chatroomData => {
+					db.collection('user-rooms')
+						.doc(state.user.id)
+						.set(
+							{
+								[chatroomData.id]: true
+							},
+							{ merge: true }
+						)
+				})
+				.then(() => {
+					commit('setStatus', 'success')
+					commit('setNewChatroom', '')
+				})
 		},
 
-		getChatrooms(context) {
-			context.commit('setStatus', 'loading')
+		removeChatroom({ commit, state }, value) {
+			commit('setStatus', 'loading')
+			db.collection('chatrooms')
+				.doc(value.id)
+				.delete()
+				.then(() => {
+					db.collection('user-rooms')
+						.doc(state.user.id)
+						.update({
+							[value.id]: firebase.firestore.FieldValue.delete()
+						})
+						.then(() => {
+							commit('setStatus', 'success')
+						})
+				})
+				.catch(err => {
+					commit('setStatus', 'error')
+					console.log(err)
+				})
+		},
+
+		// Handle getting chatrooms
+		getChatrooms({ commit, state }) {
+			commit('setStatus', 'loading')
 			db.collection('user-rooms')
-				.doc(context.state.user.id)
-
+				// Only find chatrooms that our user is
+				// a part of
+				.doc(state.user.id)
 				.onSnapshot(roomIds => {
-					if (!roomIds.data()) {
-						return
-					}
 					const rooms = []
+					// If there are no rooms return an empty array
+					if (!roomIds.data()) {
+						commit('setStatus', 'success')
+						return commit('setChatrooms', rooms)
+					}
+					// We need the keys(chatroom ids) to get the chatroom data
 					let ids = Object.keys(roomIds.data())
+					// Get the data from all the ids
 					ids.forEach(chatroom => {
 						db.collection('chatrooms')
 							.doc(chatroom)
 							.get()
 							.then(chatroom => {
 								rooms.push({ ...chatroom.data(), id: chatroom.id })
-								context.commit('setStatus', 'success')
-								context.commit('setChatrooms', rooms)
-							})
-					})
-				})
-		},
-
-		async login({ dispatch }, value) {
-			await firebase
-				.auth()
-				.signInWithEmailAndPassword(value.email, value.password)
-				.then(() => {
-					return dispatch('checkUser').then(() => {
-						return dispatch('getFriendsArray')
-					})
-				})
-		},
-
-		logout(context) {
-			firebase
-				.auth()
-				.signOut()
-				.then(() => {
-					context.commit('logout')
-				})
-		},
-
-		checkUser(context) {
-			return new Promise((resolve, reject) => {
-				firebase.auth().onAuthStateChanged(user => {
-					if (user) {
-						db.collection('users')
-							.doc(user.uid)
-							.get()
-							.then(response => {
-								context.commit('setUser', response.data())
-							})
-							.then(() => {
-								router.push('/profile/' + context.state.user.id)
-							})
-							.then(() => {
-								resolve()
+								commit('setStatus', 'success')
+								commit('setChatrooms', rooms)
 							})
 							.catch(() => {
-								reject()
+								commit('setStatus', 'error')
 							})
-					}
+					})
 				})
+		},
+
+		getCurrentChatroom({ state, commit, dispatch }, value) {
+			// commit('setStatus', 'loading')
+			db.collection('chatrooms')
+				.doc(value)
+				.get()
+				.then(room => {
+					commit('setCurrentChatroom', { id: room.id, ...room.data() })
+				})
+				.then(async () => {
+					return dispatch(
+						'getCurrentChatroomMessages',
+						state.currentChatroom.id
+					).then(() => {
+						// commit('setStatus', 'success')
+					})
+				})
+				.catch(() => {
+					// commit('setStatus', 'error')
+				})
+		},
+
+		getCurrentChatroomMessages({ commit }, value) {
+			let chats = []
+			return new Promise(resolve => {
+				db.collection('messages')
+					.doc(value)
+					.collection('messages')
+					.orderBy('createdAt')
+					.onSnapshot(async msgs => {
+						if (msgs.docs.length > 0) {
+							chats = []
+							msgs.forEach(message => {
+								chats.push({ ...message.data() })
+								if (msgs.docs.length === chats.length) {
+									commit('setCurrentChatroomMessages', chats)
+									resolve()
+								}
+							})
+						} else {
+							commit('setCurrentChatroomMessages', chats)
+							resolve()
+						}
+					})
 			})
 		},
 
-		allUsers(context) {
-			db.collection('users').onSnapshot(users => {
-				let allUsers = []
+		/**
+		 *
+		 * Handle all users call
+		 *
+		 */
+
+		// Get all users
+		allUsers({ commit, state }) {
+			db.collection('users').onSnapshot(async users => {
+				let allUsers
 				allUsers = []
+				// Push all users into the same array
 				users.forEach(user => {
 					allUsers.push(user.data())
 				})
-				context.commit('setAllUsers', allUsers)
+				const filteredUsers = []
+				// Filter the current user out of the array
+				// So he wont see himself
+				const filteredCurUser = allUsers.filter(x => x.id !== state.user.id)
+				// Return a promise, so we can fire something when it's finished
+				return new Promise(resolve => {
+					// We want to remove the friends of our currentUser, so they won't
+					// See them in the all users section
+					// Run a forEach over the users
+					filteredCurUser.forEach((user, index, array) => {
+						let count = 0
+						// Run a forEach over the friends inside the other forEach
+						// So we are running each of the users over each of the friends
+						state.friends.forEach(friend => {
+							// If they have same id increment count with 1
+							// So we know the id is seen in both arrays
+							if (friend.id === user.id) {
+								count++
+								return
+							}
+						})
+
+						// If filteredCurUser.length - 1 is the same as index, we have gone through all
+						// the objects in the array and therefore we can resolve
+						if (array.length - 1 == index) {
+							resolve()
+						}
+						// Check if count is higher than 0, so we can see if the
+						// same user is in both arrays and therefore NOT push them into our
+						// final array
+						// Reset count aswell, so it wont be 1 for the next loop
+						if (count > 0) {
+							count = 0
+							return
+						} else {
+							// Push the user into our array
+							filteredUsers.push(user)
+						}
+					})
+					// When we have resolved run the new Set instance
+					// Removes all duplicates
+					// Then commit our mutation to set all users
+				}).then(() => {
+					const allUser = new Set(filteredUsers)
+					commit('setAllUsers', allUser)
+				})
 			})
 		}
 	},
+
+	getters: {},
 	modules: {}
 })

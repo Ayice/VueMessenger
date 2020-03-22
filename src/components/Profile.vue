@@ -1,9 +1,5 @@
 <template>
-	<div v-if="userProfile === null">
-		<h1>Loading</h1>
-	</div>
-
-	<section class="profile" v-else>
+	<section class="profile" v-if="userProfile !== null">
 		<div class="profile-pic">
 			<img src alt="profile pic" />
 		</div>
@@ -15,7 +11,11 @@
 			<Friends v-if="userProfile.id === user.id" />
 		</div>
 		<DisplayUsers />
-		<Chatrooms class="chatrooms" v-if="userProfile.id === user.id" />
+
+		<div>
+			<p>Chatrooms you're a member of</p>
+			<Chatrooms class="chatrooms" v-if="userProfile.id === user.id" />
+		</div>
 	</section>
 </template>
 

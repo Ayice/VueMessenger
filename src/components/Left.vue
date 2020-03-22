@@ -1,6 +1,7 @@
 <template>
 	<section class="left-section">
-		<h1>Create Todos!</h1>
+		<h1 v-if="user">Pick a chatroom!</h1>
+		<h1 v-else>Log in</h1>
 		<Chatrooms />
 		<Login />
 	</section>
@@ -9,6 +10,7 @@
 <script>
 	import Chatrooms from './ChatRooms'
 	import Login from './LogIn'
+	import { mapState } from 'vuex'
 
 	export default {
 		components: {
@@ -18,6 +20,9 @@
 		name: 'LeftSection',
 		data() {
 			return {}
+		},
+		computed: {
+			...mapState(['user'])
 		}
 	}
 </script>

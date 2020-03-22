@@ -1,7 +1,7 @@
 import firebase from 'firebase/app'
 import 'firebase/firestore'
 
-const firebaseConfig = {
+var firebaseConfig = {
 	apiKey: 'AIzaSyAQc03hjJerIPpiTNnvok8zpYm9Nz7OAIM',
 	authDomain: 'vue-chat-27419.firebaseapp.com',
 	databaseURL: 'https://vue-chat-27419.firebaseio.com',

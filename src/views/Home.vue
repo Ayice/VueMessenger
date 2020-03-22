@@ -1,29 +1,31 @@
 <template>
-  <div class="home">
-    <LeftSection />
-    <RightSection />
-  </div>
+	<div class="home">
+		<LeftSection />
+		<RightSection v-if="user" />
+	</div>
 </template>
 
 <script>
 	import LeftSection from '../components/Left'
 	import RightSection from '../components/Right'
+
+	import { mapState } from 'vuex'
 	export default {
 		name: 'Home',
-		components: { LeftSection, RightSection }
+		components: { LeftSection, RightSection },
+		computed: mapState(['user'])
 	}
 </script>
 
 <style lang="scss">
 	.home {
-		width: 100%;
 		display: flex;
-		flex: 1 50%;
+		width: 100%;
 		height: 100vh;
+		justify-content: center;
 
-		& > section {
+		& > * {
 			width: 50%;
-			height: 100%;
 		}
 	}
 </style>

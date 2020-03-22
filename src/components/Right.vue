@@ -1,21 +1,13 @@
 <template>
 	<section class="right-section">
-		<TodoList />
-		<DoneList />
+		<router-view></router-view>
 	</section>
 </template>
 
 <script>
-	// import { eventBus } from '../main'
-	// import TodoItem from './TodoItem'
-	import DoneList from './DoneList'
-	import TodoList from './TodoList'
-
+	// import Chatroom from '@/components/ChatRoom'
 	export default {
-		name: 'RightSection',
-		components: { DoneList, TodoList },
-
-		methods: {}
+		name: 'RightSection'
 	}
 </script>
 
