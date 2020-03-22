@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import router from './router'
-// import { firestorePlugin } from 'vuefire'
 import store from './store'
 import firebase from 'firebase'
 
