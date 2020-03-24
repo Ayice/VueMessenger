@@ -6,6 +6,8 @@
 
 		<div v-else-if="status === 'error'" class="loader">
 			<h1>An Error occured, try again..</h1>
+			<p>{{errorMsg}}</p>
+			<button @click="removeError()">Try again...</button>
 		</div>
 
 		<div class="router-container" :class="{ loading : status !== 'success' }">
@@ -26,9 +28,14 @@
 	import { mapState, mapActions } from 'vuex'
 	export default {
 		computed: {
-			...mapState(['user', 'status'])
+			...mapState(['user', 'status', 'errorMsg'])
 		},
-		methods: { ...mapActions(['logout']) }
+		methods: {
+			...mapActions(['logout']),
+			removeError() {
+				this.$store.commit('setStatus', 'success')
+			}
+		}
 	}
 </script>
 
@@ -75,6 +82,7 @@
 		background-color: transparent;
 		justify-content: center;
 		align-items: center;
+		flex-direction: column;
 
 		h1 {
 			font-size: 2em;

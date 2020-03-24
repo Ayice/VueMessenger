@@ -1,6 +1,6 @@
 <template>
 	<section v-if="id === user.id">
-		<form @submit.prevent="updateUser">
+		<form @submit.prevent="handleUpdate">
 			<fieldset>
 				<legend>Update your profile</legend>
 				<div class="input-control">
@@ -42,7 +42,7 @@
 
 		<button @click="updatePassword = !updatePassword">Update your password</button>
 
-		<form v-if="updatePassword" class="update-password">
+		<form v-if="updatePassword" @submit.prevent="handleUpdatePassword" class="update-password">
 			<fieldset :class="samePassword ? 'correctPassword' : ''">
 				<legend>Update Password</legend>
 
@@ -72,6 +72,8 @@
 				</div>
 
 				<button type="submit">Update password</button>
+
+				<p>{{errorMsg}}</p>
 			</fieldset>
 		</form>
 	</section>
@@ -91,13 +93,41 @@
 				},
 				updatePassword: false,
 				confirmPassword: '',
-				password: ''
+				password: '',
+				passwordError: ''
 			}
 		},
 
-		methods: mapActions(['updateUser']),
+		methods: {
+			...mapActions(['updateUser', 'updateUserPassword']),
+			handleUpdate() {
+				const userUpdateData = {}
+				let count = 0
+				for (const key in this.form) {
+					count++
+					const element = this.form[key]
+					if (element !== '') {
+						userUpdateData[key] = element
+					}
+					if (count === Object.keys(this.form).length) {
+						this.updateUser(userUpdateData)
+						this.form.name = ''
+						this.form.username = ''
+						this.form.email = ''
+					}
+				}
+			},
+
+			handleUpdatePassword() {
+				if (this.samePassword) {
+					this.updateUserPassword(this.confirmPassword)
+				}
+			}
+		},
 
 		computed: {
+			...mapState(['user']),
+
 			samePassword() {
 				if (this.password !== '') {
 					return this.password === this.confirmPassword
@@ -105,7 +135,14 @@
 					return false
 				}
 			},
-			...mapState(['user'])
+
+			errorMsg() {
+				if (this.confirmPassword !== '' && !this.samePassword) {
+					return 'The two passwords are not identical'
+				} else {
+					return ''
+				}
+			}
 		}
 	}
 </script>

@@ -21,7 +21,8 @@ export default new Vuex.Store({
 			email: ''
 		},
 		currentChatroom: {},
-		currentChatroomMessages: []
+		currentChatroomMessages: [],
+		errorMsg: ''
 	},
 	mutations: {
 		setNewUserEmail(state, value) {
@@ -75,47 +76,133 @@ export default new Vuex.Store({
 
 		setCurrentChatroomMessages(state, value) {
 			state.currentChatroomMessages = value
+		},
+
+		setErrorMsg(state, value) {
+			state.errorMsg = value
 		}
 	},
 
 	actions: {
 		/**
 		 *
-		 * Handling creation of users
+		 * Handling user actions
 		 *
 		 */
 
-		addNewUser(context) {
+		addNewUser({ commit, state }) {
 			firebase
 				.auth()
 				.createUserWithEmailAndPassword(
-					context.state.newUser.email,
-					context.state.newUser.password
+					state.newUser.email,
+					state.newUser.password
 				)
 				.then(response => {
 					db.collection('users')
 						.doc(response.user.uid)
 						.set({
-							name: context.state.newUser.name,
-							username: context.state.newUser.username,
-							email: context.state.newUser.email,
+							name: state.newUser.name,
+							username: state.newUser.username,
+							email: state.newUser.email,
 							id: response.user.uid
-						})
-						.catch(err => {
-							console.log(err, 'database')
 						})
 				})
 				.then(() => {
 					alert('You created a user')
 					router.push('/')
 				})
-				.catch(err => {
-					// Handle Errors here.
-					var errorCode = err.code
-					var errorMessage = err.message
+				.catch(() => {
+					commit('setStatus', 'error')
+					commit(
+						'setErrorMsg',
+						'Something went wrong with creating a user. Try again'
+					)
+				})
+		},
 
-					console.log(errorCode, errorMessage)
-					// ...
+		async updateUser({ state, commit, dispatch }, value) {
+			commit('setStatus', 'loading')
+			if (value.username) {
+				await dispatch('checkUserName', value.username)
+			}
+			if (value.email) {
+				await dispatch('updateUserEmail', value.email)
+			}
+			db.collection('users')
+				.doc(state.user.id)
+				.update({
+					...value
+				})
+				.then(() => {
+					db.collection('users')
+						.doc(state.user.id)
+						.get()
+						.then(async user => {
+							return dispatch('checkUser', user).then(() => {
+								commit('setStatus', 'success')
+							})
+						})
+				})
+				.catch(() => {
+					commit('setStatus', 'error')
+					commit(
+						'setErrorMsg',
+						'There was a problem updating your user. Try Again'
+					)
+				})
+		},
+
+		checkUserName({ commit }, username) {
+			return new Promise((resolve, reject) => {
+				db.collection('users')
+					.where('username', '==', username)
+					.get()
+					.then(user => {
+						if (user.docs.length > 0) {
+							reject()
+							commit('setStatus', 'error')
+							commit('setErrorMsg', 'This username already exists')
+						} else {
+							resolve()
+						}
+					})
+			})
+		},
+
+		updateUserEmail({ commit }, email) {
+			return new Promise((resolve, reject) => {
+				const user = firebase.auth().currentUser
+				user
+					.updateEmail(email)
+					.then(() => {
+						resolve()
+					})
+					.catch(() => {
+						reject()
+						commit('setStatus', 'error')
+						commit(
+							'setErrorMsg',
+							'An error occured while updating your email. Try again in a moment'
+						)
+					})
+			})
+		},
+
+		updateUserPassword({ commit }, password) {
+			commit('setStatus', 'loading')
+			const user = firebase.auth().currentUser
+			console.log(password, user)
+			user
+				.updatePassword(password)
+				.then(() => {
+					commit('setStatus', 'success')
+				})
+				.catch(() => {
+					commit('setStatus', 'error')
+					commit(
+						'setErrorMsg',
+						'An error occured trying to update your password. Try again in a moment'
+					)
 				})
 		},
 
@@ -133,7 +220,11 @@ export default new Vuex.Store({
 				.signInWithEmailAndPassword(value.email, value.password)
 
 				.catch(() => {
-					return commit('setStatus', 'error')
+					commit('setStatus', 'error')
+					commit(
+						'setErrorMsg',
+						"The Information you entered wasn't correct. Try Again"
+					)
 				})
 		},
 
@@ -147,9 +238,16 @@ export default new Vuex.Store({
 		checkUser({ commit }, user) {
 			// Returning promise, so our login action from earlier know
 			// when this is done.
+			let id = ''
+
+			if (user.id) {
+				id = user.id
+			} else {
+				id = user.uid
+			}
 			return new Promise((resolve, reject) => {
 				db.collection('users')
-					.doc(user.uid)
+					.doc(id)
 					.get()
 					.then(response => {
 						// Commit mutation, with our user's data
@@ -161,6 +259,10 @@ export default new Vuex.Store({
 					})
 					.catch(() => {
 						commit('setStatus', 'error')
+						commit(
+							'setErrorMsg',
+							'We had an internal error... Try again in a moment'
+						)
 						reject()
 					})
 			})
@@ -207,6 +309,10 @@ export default new Vuex.Store({
 				.catch(err => {
 					console.log(err)
 					commit('setStatus', 'error')
+					commit(
+						'setErrorMsg',
+						`An error occured when trying to add ${friendId.username} to your friendlist. Try again in a moment`
+					)
 				})
 		},
 
@@ -236,6 +342,10 @@ export default new Vuex.Store({
 								})
 								.catch(() => {
 									commit('setStatus', 'error')
+									commit(
+										'setErrorMsg',
+										'An internal error occured try to log on again'
+									)
 									reject()
 								})
 						} else {
@@ -309,6 +419,10 @@ export default new Vuex.Store({
 				})
 				.catch(err => {
 					commit('setStatus', 'error')
+					commit(
+						'setErrorMsg',
+						'An error occured when trying to remove the user from your friendlist. Try again in a moment'
+					)
 					console.log(err)
 				})
 		},
@@ -358,6 +472,10 @@ export default new Vuex.Store({
 				})
 				.catch(err => {
 					commit('setStatus', 'error')
+					commit(
+						'setErrorMsg',
+						'An error occured when trying to remove the chatroom from your chatroomlist. Try again in a moment'
+					)
 					console.log(err)
 				})
 		},
@@ -390,6 +508,10 @@ export default new Vuex.Store({
 							})
 							.catch(() => {
 								commit('setStatus', 'error')
+								commit(
+									'setErrorMsg',
+									'An internal error happened. Try again in a moment'
+								)
 							})
 					})
 				})
@@ -413,6 +535,10 @@ export default new Vuex.Store({
 				})
 				.catch(() => {
 					commit('setStatus', 'error')
+					commit(
+						'setErrorMsg',
+						'An error occured trying to find the chatroom. Try again in a moment'
+					)
 				})
 		},
 
