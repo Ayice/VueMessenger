@@ -1,18 +1,21 @@
 <template>
 	<section class="login" v-if="user == null">
-		<h1>Log in</h1>
 		<form @submit.prevent="login(form)">
-			<label>
-				E-mail address
-				<input type="email" name="email" v-model="form.email" required />
-			</label>
+			<fieldset>
+				<legend>Log in</legend>
 
-			<label>
-				Password
-				<input type="password" name="password" v-model="form.password" required />
-			</label>
+				<div class="input-control">
+					<label for="email">E-mail address</label>
+					<input id="email" type="email" name="email" v-model="form.email" required />
+				</div>
 
-			<button type="submit">Log in</button>
+				<div class="input-control">
+					<label for="password">Password</label>
+					<input type="password" name="password" v-model="form.password" required id="password" />
+				</div>
+
+				<button type="submit">Log in</button>
+			</fieldset>
 		</form>
 	</section>
 </template>

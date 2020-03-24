@@ -1,7 +1,7 @@
 <template>
 	<section class="left-section">
 		<h1 v-if="user">Pick a chatroom!</h1>
-		<h1 v-else>Log in</h1>
+
 		<Chatrooms />
 		<Login />
 	</section>

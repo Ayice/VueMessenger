@@ -9,6 +9,8 @@
 			<h2>aka. {{userProfile.username}}</h2>
 
 			<Friends v-if="userProfile.id === user.id" />
+
+			<router-link :to="'/update-profile/' + user.id">Update your profile</router-link>
 		</div>
 		<DisplayUsers />
 

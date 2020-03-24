@@ -47,6 +47,17 @@ const router = new Router({
 
 			component: () =>
 				import(/* webpackChunkName: "profile" */ '../components/Profile.vue')
+		},
+
+		{
+			path: '/update-profile/:id',
+			name: 'UpdateProfile',
+			props: true,
+
+			component: () =>
+				import(
+					/* webpackChunkName: "updateProfile"*/ '../components/UpdateProfile.vue'
+				)
 		}
 	]
 })

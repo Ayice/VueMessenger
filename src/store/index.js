@@ -396,7 +396,7 @@ export default new Vuex.Store({
 		},
 
 		getCurrentChatroom({ state, commit, dispatch }, value) {
-			// commit('setStatus', 'loading')
+			commit('setStatus', 'loading')
 			db.collection('chatrooms')
 				.doc(value)
 				.get()
@@ -408,11 +408,11 @@ export default new Vuex.Store({
 						'getCurrentChatroomMessages',
 						state.currentChatroom.id
 					).then(() => {
-						// commit('setStatus', 'success')
+						commit('setStatus', 'success')
 					})
 				})
 				.catch(() => {
-					// commit('setStatus', 'error')
+					commit('setStatus', 'error')
 				})
 		},
 

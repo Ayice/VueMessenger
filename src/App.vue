@@ -8,11 +8,11 @@
 			<h1>An Error occured, try again..</h1>
 		</div>
 
-		<div class="router-container" :class="{ loading: status !== 'success' }">
+		<div class="router-container" :class="{ loading : status !== 'success' }">
 			<div class="nav">
 				<router-link to="/">Home</router-link>|
 				<router-link to="/signup" v-if="!user">Create User</router-link>|
-				<router-link :to="'/profile/' + user.id">Profile</router-link>|
+				<router-link :to="'/profile/' + user.id" v-if="user !== null">Profile</router-link>|
 				<router-link to="/about">About</router-link>
 
 				<button @click="logout">Log out</button>
@@ -34,6 +34,7 @@
 
 <style lang="scss">
 	.app {
+		font-size: 16px;
 		font-weight: 700;
 		max-width: 950px;
 		margin: 0 auto;
@@ -87,6 +88,82 @@
 
 		&:hover {
 			transform: rotate(360deg);
+		}
+	}
+
+	form {
+		padding: 0.5em;
+		display: flex;
+		flex-direction: column;
+		width: 60%;
+
+		fieldset {
+			margin: 0;
+			padding: 0;
+			border: none;
+
+			legend {
+				padding-top: 1em;
+				font-size: 1.5em;
+			}
+		}
+
+		.input-control {
+			position: relative;
+			display: flex;
+			margin: 0.8em 0;
+			flex-direction: column-reverse;
+
+			input {
+				padding: 0.3em;
+				border-radius: 0;
+				border: none;
+				border-bottom: 1px solid rgb(95, 95, 95);
+				font-size: 1.3em;
+
+				&.not-empty {
+					border-bottom: 1px solid #42b983;
+				}
+
+				&:focus {
+					outline: none;
+					border-bottom: 1px solid #42b983;
+
+					+ label {
+						bottom: 80%;
+						font-size: 70%;
+						left: 2%;
+					}
+				}
+			}
+
+			label {
+				cursor: pointer;
+				position: absolute;
+				width: 100%;
+				bottom: 0;
+				left: 0;
+				margin: 0.5em 0 0.3em;
+				transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+				&.not-empty {
+					color: #42b983;
+					bottom: 80%;
+					font-size: 70%;
+					left: 2%;
+				}
+			}
+		}
+
+		button {
+			background-color: #42b983;
+			border: none;
+			outline: none;
+			color: #fff;
+			font-size: 1.3em;
+			border-radius: 5px;
+			cursor: pointer;
+			box-shadow: 3px 4px 10px #333;
 		}
 	}
 </style>

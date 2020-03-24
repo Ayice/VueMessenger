@@ -1,19 +1,31 @@
 <template>
 	<section class="form">
 		<form @submit.prevent="addNewUser">
-			<label for="name">Name</label>
-			<input type="text" id="name" name="name" required v-model="newUserName" />
+			<fieldset>
+				<legend>Sign up</legend>
 
-			<label for="email">E-mail</label>
-			<input type="email" id="email" name="email" required v-model="newUserEmail" />
+				<div class="input-control">
+					<input type="text" id="name" name="name" required v-model="newUserName" />
+					<label for="name">Fullname</label>
+				</div>
 
-			<label for="username">Username</label>
-			<input type="text" id="username" name="username" required v-model="newUserUserName" />
+				<div class="input-control">
+					<input type="email" id="email" name="email" required v-model="newUserEmail" />
+					<label for="email">E-mail</label>
+				</div>
 
-			<label for="password">Password</label>
-			<input type="password" id="password" name="password" required v-model="newUserPassword" />
+				<div class="input-control">
+					<input type="text" id="username" name="username" required v-model="newUserUserName" />
+					<label for="username">Username</label>
+				</div>
 
-			<button type="submit">Create user</button>
+				<div class="input-control">
+					<input type="password" id="password" name="password" required v-model="newUserPassword" />
+					<label for="password">Password</label>
+				</div>
+
+				<button type="submit">Create user</button>
+			</fieldset>
 		</form>
 	</section>
 </template>
