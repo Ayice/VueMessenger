@@ -118,8 +118,8 @@
 			display: flex;
 
 			.new-message {
-				width: 80%;
-				max-width: 80%;
+				width: 90%;
+				max-width: 90%;
 				max-height: 200px;
 				overflow-y: auto;
 				overflow-x: hidden;
@@ -153,7 +153,7 @@
 					position: absolute;
 					width: 50px;
 					transition: cubic-bezier(0.165, 0.84, 0.44, 1);
-					right: 5%;
+					right: 0;
 					bottom: 0;
 				}
 
