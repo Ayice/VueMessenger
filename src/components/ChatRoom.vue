@@ -2,29 +2,30 @@
 	<div class="chatroom" v-if="currentChatroom">
 		<h1>{{ currentChatroom.name }}</h1>
 
-		<ul v-for="message in currentChatroomMessages" :key="message.id">
-			<li :class="[message.senderId === user.id ? 'author' : 'receiver']">
+		<div class="message-container">
+			<p
+				v-for="message in currentChatroomMessages"
+				:key="message.id"
+				:class="[message.senderId === user.id ? 'author' : 'receiver']"
+			>
 				{{ message.sender }} :
 				{{ message.message }}
-			</li>
-		</ul>
+			</p>
+		</div>
 
-		<form @submit.prevent="sendMsg">
-			<label>
-				Message
-				<input
-					type="text"
-					name="message"
-					id="message"
-					placeholder="Write your message here"
-					v-model="message"
-				/>
-			</label>
+		<div class="new-message-container">
+			<div
+				class="message"
+				:class="message !== '' ? 'hide-placeholder' : ''"
+				@keydown.enter.exact.prevent="sendMsg($event)"
+				@input="handleChange($event)"
+				contenteditable="true"
+			></div>
 
-			<span @click="sendMsg">
+			<span class="send-icon" @click="sendMsg">
 				<PaperPlane />
 			</span>
-		</form>
+		</div>
 	</div>
 </template>
 
@@ -65,10 +66,15 @@
 		methods: {
 			...mapActions(['getCurrentChatroom', 'getCurrentChatoomMessages']),
 
+			handleChange($event) {
+				this.message = $event.target.innerHTML
+			},
+
 			sendMsg() {
 				if (this.message === '') {
 					return
 				}
+
 				db.collection('messages')
 					.doc(this.id)
 					.collection('messages')
@@ -91,6 +97,7 @@
 					})
 					.then(() => {
 						this.message = ''
+						document.querySelector('.message').innerHTML = ''
 					})
 			}
 		}
@@ -99,44 +106,84 @@
 
 <style lang="scss" scoped>
 	.chatroom {
-		padding-top: 2em;
+		width: 100%;
+		padding: 2em 1em 0;
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
 
-		form {
-			padding: 2em;
-			width: 80%;
+		.new-message-container {
+			width: 100%;
 			position: relative;
+			display: flex;
 
-			label {
-				font-size: 1.3em;
+			.message {
+				width: 80%;
+				max-width: 80%;
+				max-height: 200px;
+				overflow-y: auto;
+				overflow-x: hidden;
+				outline: none;
+				user-select: text;
+				white-space: pre-wrap;
+				overflow-wrap: break-word;
+				border-bottom: 1px solid #fff;
+				position: relative;
 
-				input {
-					margin: 0.5em 0 0;
-					padding: 0.5em;
-					border: none;
-					border-radius: 0;
-					background: none;
-					border-bottom: 1px solid #ffffff;
+				&::after {
+					content: 'Write a message';
+					font-size: 0.8em;
+					position: absolute;
+					bottom: 0;
+					left: 0;
+					width: 100%;
+					pointer-events: none;
+				}
 
-					&::placeholder {
-						color: #ffffff;
+				&.hide-placeholder {
+					&::after {
+						content: '';
 					}
 				}
 			}
-			span {
+			.send-icon {
 				cursor: pointer;
+				svg {
+					position: absolute;
+					width: 50px;
+					transition: cubic-bezier(0.165, 0.84, 0.44, 1);
+					right: 5%;
+					bottom: 0;
+				}
 
 				&:hover {
 					svg {
+						cursor: pointer;
+
 						animation-name: paperPlane;
 						animation-duration: 0.3s;
 					}
 				}
 			}
 		}
+
+		.message-container {
+			display: flex;
+			flex-direction: column;
+			width: 100%;
+
+			p {
+				&.author {
+					align-self: flex-start;
+				}
+
+				&.receiver {
+					align-self: flex-end;
+				}
+			}
+		}
+
 		@keyframes paperPlane {
 			0% {
 				transform: translateY(0) rotateZ(0);
