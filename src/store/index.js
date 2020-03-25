@@ -191,7 +191,6 @@ export default new Vuex.Store({
 		updateUserPassword({ commit }, password) {
 			commit('setStatus', 'loading')
 			const user = firebase.auth().currentUser
-			console.log(password, user)
 			user
 				.updatePassword(password)
 				.then(() => {
