@@ -1,7 +1,7 @@
 <template>
 	<div class="home">
 		<LeftSection />
-		<RightSection v-if="user" />
+		<RightSection v-if="$route.params.id" />
 	</div>
 </template>
 
