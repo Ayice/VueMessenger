@@ -479,6 +479,21 @@ export default new Vuex.Store({
 				})
 		},
 
+		addToChatroom({ state, commit }, userId) {
+			commit('setStatus', 'loading')
+			db.collection('user-rooms')
+				.doc(userId)
+				.set(
+					{
+						[state.currentChatroom.id]: true
+					},
+					{ merge: true }
+				)
+				.then(() => {
+					commit('setStatus', 'success')
+				})
+		},
+
 		// Handle getting chatrooms
 		getChatrooms({ commit, state }) {
 			commit('setStatus', 'loading')
