@@ -22,7 +22,7 @@
 
 <style lang="scss" scoped >
 	.cls-1 {
-		fill: #fff;
+		fill: #42b983;
 		stroke: #000;
 		stroke-miterlimit: 10;
 		stroke-width: 4px;
