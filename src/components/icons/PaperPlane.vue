@@ -21,15 +21,6 @@
 </script>
 
 <style lang="scss" scoped >
-	svg {
-		cursor: pointer;
-		position: absolute;
-		right: 10%;
-		bottom: 2em;
-		width: 50px;
-		transition: cubic-bezier(0.165, 0.84, 0.44, 1);
-	}
-
 	.cls-1 {
 		fill: #fff;
 		stroke: #000;
