@@ -20,7 +20,7 @@
 		padding: 15px;
 		border-radius: 15px;
 		margin-bottom: 0.5em;
-		color: #333;
+		color: #fff;
 
 		&.author {
 			align-self: flex-end;

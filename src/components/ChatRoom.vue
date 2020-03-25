@@ -2,19 +2,19 @@
 	<div class="chatroom" v-if="currentChatroom">
 		<h1>{{ currentChatroom.name }}</h1>
 
-		<div class="messages-container">
+		<transition-group tag="div" name="slide" class="messages-container">
 			<Message
 				v-for="message in currentChatroomMessages"
 				:key="message.id"
 				:class="[message.senderId === user.id ? 'author' : 'receiver']"
 				:message="message"
 			/>
-		</div>
+		</transition-group>
 
 		<div class="new-message-container">
 			<div
 				class="new-message"
-				:class="message !== '' ? 'hide-placeholder' : ''"
+				:class="newMessage !== '' ? 'hide-placeholder' : ''"
 				@keydown.enter.exact.prevent="sendMsg($event)"
 				@input="handleChange($event)"
 				contenteditable="true"
@@ -24,10 +24,14 @@
 				<PaperPlane />
 			</span>
 		</div>
-		<button @click="showAddMenu = !showAddMenu">Add</button>
-		<section class="add-section" :class="showAddMenu ? 'show' :''">
-			<Friends :remove="false" />
-		</section>
+
+		<div class="chat-options-div" :class="showAddMenu ? 'show' :''">
+			<button @click="showAddMenu = !showAddMenu">Add</button>
+			<section class="add-section">
+				<h2>Add Friend to Chat</h2>
+				<Friends :remove="false" />
+			</section>
+		</div>
 	</div>
 </template>
 
@@ -45,7 +49,7 @@
 		components: { PaperPlane, Message, Friends },
 		data() {
 			return {
-				message: '',
+				newMessage: '',
 				showAddMenu: false
 			}
 		},
@@ -72,11 +76,11 @@
 			...mapActions(['getCurrentChatroom', 'getCurrentChatoomMessages']),
 
 			handleChange($event) {
-				this.message = $event.target.innerHTML
+				this.newMessage = $event.target.innerHTML
 			},
 
 			sendMsg() {
-				if (this.message === '') {
+				if (this.newMessage === '') {
 					return
 				}
 
@@ -84,7 +88,7 @@
 					.doc(this.id)
 					.collection('messages')
 					.add({
-						message: this.message,
+						message: this.newMessage,
 						sender: this.user.username,
 						senderId: this.user.id,
 						createdAt: firebase.firestore.Timestamp.now()
@@ -94,15 +98,15 @@
 							.doc(this.id)
 							.set(
 								{
-									lastMessage: this.message,
+									lastMessage: this.newMessage,
 									lastSender: this.user.id
 								},
 								{ merge: true }
 							)
 					})
 					.then(() => {
-						this.message = ''
-						document.querySelector('.message').innerHTML = ''
+						this.newMessage = ''
+						document.querySelector('.new-message').innerHTML = ''
 					})
 			}
 		}
@@ -196,18 +200,61 @@
 			}
 		}
 
-		.add-section {
+		.chat-options-div {
 			position: absolute;
+			top: 5%;
 			right: 0;
-			top: 0;
-			width: 0;
-			height: 100%;
-			z-index: 1;
+			bottom: 10%;
+			width: 50px;
+			z-index: 10;
+			transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+			pointer-events: none;
 
 			&.show {
-				// right: 100%;
 				width: 100%;
+
+				.add-section {
+					pointer-events: all;
+					opacity: 1;
+				}
 			}
+
+			button {
+				pointer-events: all;
+				z-index: 100;
+				position: relative;
+			}
+		}
+
+		.add-section {
+			pointer-events: none;
+			position: absolute;
+			border-top-left-radius: 15px;
+			border-bottom-left-radius: 15px;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			width: 80%;
+			opacity: 0;
+			background-color: #fff;
+			overflow: hidden;
+			box-shadow: 0px 0px 8px #333;
+			transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+			padding: 2em 1em 0;
+		}
+
+		.slide-enter-active {
+			transition: all 0.3s ease;
+		}
+
+		.slide-leave-active {
+			transition: all 0.8s cubic-bezier(1, 0.5, 0.8, 1);
+		}
+
+		.slide-enter,
+		.slide-fade-leave-to {
+			transform: translateX(-10px);
+			opacity: 0;
 		}
 	}
 </style>

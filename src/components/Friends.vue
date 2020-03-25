@@ -36,5 +36,9 @@
 			margin: 0.5em 0;
 			width: 80%;
 		}
+
+		.add {
+			margin-left: auto;
+		}
 	}
 </style>

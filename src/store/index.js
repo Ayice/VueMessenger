@@ -562,13 +562,16 @@ export default new Vuex.Store({
 				db.collection('messages')
 					.doc(value)
 					.collection('messages')
-					.orderBy('createdAt')
+					.orderBy('createdAt', 'desc')
+					.limit(10)
+
 					.onSnapshot(async msgs => {
 						if (msgs.docs.length > 0) {
 							chats = []
 							msgs.forEach(message => {
-								chats.push({ ...message.data() })
+								chats.push({ id: message.id, ...message.data() })
 								if (msgs.docs.length === chats.length) {
+									chats = chats.slice().reverse()
 									commit('setCurrentChatroomMessages', chats)
 									resolve()
 								}
