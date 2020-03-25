@@ -2,20 +2,18 @@
 	<div class="chatroom" v-if="currentChatroom">
 		<h1>{{ currentChatroom.name }}</h1>
 
-		<div class="message-container">
-			<p
+		<div class="messages-container">
+			<Message
 				v-for="message in currentChatroomMessages"
 				:key="message.id"
 				:class="[message.senderId === user.id ? 'author' : 'receiver']"
-			>
-				{{ message.sender }} :
-				{{ message.message }}
-			</p>
+				:message="message"
+			/>
 		</div>
 
 		<div class="new-message-container">
 			<div
-				class="message"
+				class="new-message"
 				:class="message !== '' ? 'hide-placeholder' : ''"
 				@keydown.enter.exact.prevent="sendMsg($event)"
 				@input="handleChange($event)"
@@ -34,11 +32,12 @@
 	import { mapState, mapActions } from 'vuex'
 	import firebase from 'firebase'
 	import PaperPlane from './icons/PaperPlane.vue'
+	import Message from './Message'
 
 	export default {
 		name: 'Chatroom',
 		props: ['id'],
-		components: { PaperPlane },
+		components: { PaperPlane, Message },
 		data() {
 			return {
 				message: ''
@@ -118,7 +117,7 @@
 			position: relative;
 			display: flex;
 
-			.message {
+			.new-message {
 				width: 80%;
 				max-width: 80%;
 				max-height: 200px;
@@ -147,6 +146,7 @@
 					}
 				}
 			}
+
 			.send-icon {
 				cursor: pointer;
 				svg {
@@ -168,20 +168,12 @@
 			}
 		}
 
-		.message-container {
+		.messages-container {
 			display: flex;
 			flex-direction: column;
 			width: 100%;
-
-			p {
-				&.author {
-					align-self: flex-start;
-				}
-
-				&.receiver {
-					align-self: flex-end;
-				}
-			}
+			border-bottom: 1px solid #fff;
+			margin-bottom: 2em;
 		}
 
 		@keyframes paperPlane {
