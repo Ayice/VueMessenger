@@ -127,7 +127,7 @@
 				user-select: text;
 				white-space: pre-wrap;
 				overflow-wrap: break-word;
-				border-bottom: 1px solid #fff;
+				border-bottom: 1px solid #000;
 				position: relative;
 
 				&::after {
@@ -172,7 +172,7 @@
 			display: flex;
 			flex-direction: column;
 			width: 100%;
-			border-bottom: 1px solid #fff;
+			border-bottom: 1px solid #000;
 			margin-bottom: 2em;
 		}
 

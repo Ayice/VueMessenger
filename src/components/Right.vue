@@ -16,7 +16,5 @@
 		display: flex;
 		align-items: flex-start;
 		justify-content: center;
-		color: #fff;
-		background-color: #42b983;
 	}
 </style>

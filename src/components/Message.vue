@@ -17,13 +17,14 @@
 <style lang="scss" >
 	.message-container {
 		width: fit-content;
-		padding: 5px;
+		padding: 15px;
 		border-radius: 15px;
 		margin-bottom: 0.5em;
+		color: #333;
 
 		&.author {
 			align-self: flex-end;
-			background-color: #42b3b9;
+			background-color: #42b983;
 		}
 
 		&.receiver {
@@ -32,6 +33,7 @@
 		}
 
 		.message {
+			margin: 0;
 			font-size: 13px;
 		}
 	}
