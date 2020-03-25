@@ -24,6 +24,10 @@
 				<PaperPlane />
 			</span>
 		</div>
+		<button @click="showAddMenu = !showAddMenu">Add</button>
+		<section class="add-section" :class="showAddMenu ? 'show' :''">
+			<Friends :remove="false" />
+		</section>
 	</div>
 </template>
 
@@ -33,14 +37,16 @@
 	import firebase from 'firebase'
 	import PaperPlane from './icons/PaperPlane.vue'
 	import Message from './Message'
+	import Friends from './Friends'
 
 	export default {
 		name: 'Chatroom',
 		props: ['id'],
-		components: { PaperPlane, Message },
+		components: { PaperPlane, Message, Friends },
 		data() {
 			return {
-				message: ''
+				message: '',
+				showAddMenu: false
 			}
 		},
 
@@ -105,6 +111,8 @@
 
 <style lang="scss" scoped>
 	.chatroom {
+		position: relative;
+		overflow: hidden;
 		width: 100%;
 		padding: 2em 1em 0;
 		display: flex;
@@ -185,6 +193,20 @@
 			}
 			100% {
 				transform: translateY(0) rotateZ(0);
+			}
+		}
+
+		.add-section {
+			position: absolute;
+			right: 0;
+			top: 0;
+			width: 0;
+			height: 100%;
+			z-index: 1;
+
+			&.show {
+				// right: 100%;
+				width: 100%;
 			}
 		}
 	}
