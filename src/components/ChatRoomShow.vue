@@ -2,13 +2,13 @@
 	<router-link class="chatroom-link" :to="{name: 'Chatroom', params: {id: chatroom.id}}">
 		<div>
 			<p class="h2">{{chatroom.name}}</p>
+			<ul>
+				<li v-for="member in chatroom.members" :key="member.id">{{member.username}}</li>
+			</ul>
 			<p class="last-message">
 				<b v-if="chatroom.lastSender === user.id">You:</b>
 				{{ chatroom.lastMessage }}...
 			</p>
-			<ul>
-				<li v-for="member in chatroom.members" :key="member">{{member.username}}</li>
-			</ul>
 			<span class="remove" @click="removeChatroom(chatroom)">X</span>
 		</div>
 	</router-link>

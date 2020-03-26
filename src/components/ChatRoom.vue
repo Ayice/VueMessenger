@@ -117,6 +117,7 @@
 	.chatroom {
 		position: relative;
 		overflow: hidden;
+		min-height: 50vh;
 		width: 100%;
 		padding: 2em 1em 0;
 		display: flex;

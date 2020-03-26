@@ -475,45 +475,73 @@ export default new Vuex.Store({
 				})
 		},
 
-		removeChatroom({ commit, state }, value) {
+		leaveChatroom({ dispatch, commit, state }, chatroom) {
 			commit('setStatus', 'loading')
-			if (value.authorId === state.user.id) {
-				db.collection('chatrooms')
-					.doc(value.id)
-					.delete()
-					.then(() => {
-						console.log('Chatroom deleted')
-					})
-					.catch(() => {
-						commit('setStatus', 'error')
-						commit(
-							'setErrorMsg',
-							'An error occurred deleting the chatroom. Try again in a moment'
-						)
+
+			if (chatroom.authorId === state.user.id) {
+				dispatch('removeChatroom', chatroom)
+			} else {
+				db.collection('members')
+					.doc(chatroom.id)
+					.update({
+						[state.user.id]: firebase.firestore.FieldValue.delete()
 					})
 			}
+
 			db.collection('user-rooms')
 				.doc(state.user.id)
 				.update({
-					[value.id]: firebase.firestore.FieldValue.delete()
-				})
-				.then(() => {
-					db.collection('members')
-						.doc(value.id)
-						.update({
-							[state.user.id]: firebase.firestore.FieldValue.delete()
-						})
+					[chatroom.id]: firebase.firestore.FieldValue.delete()
 				})
 				.then(() => {
 					commit('setStatus', 'success')
 				})
-				.catch(err => {
+				.catch(() => {
 					commit('setStatus', 'error')
 					commit(
 						'setErrorMsg',
 						'An error occured when trying to remove the chatroom from your chatroomlist. Try again in a moment'
 					)
-					console.log(err)
+				})
+		},
+
+		removeChatroom({ commit }, value) {
+			db.collection('chatrooms')
+				.doc(value.id)
+				.delete()
+				.then(() => {
+					db.collection('members')
+						.doc(value.id)
+						.get()
+						.then(doc => {
+							let ids = Object.keys(doc.data())
+							if (ids.length < 1) {
+								return
+							}
+							ids.forEach(userId => {
+								db.collection('user-rooms')
+									.doc(userId)
+									.update({
+										[value.id]: firebase.firestore.FieldValue.delete()
+									})
+							})
+						})
+				})
+				.then(() => {
+					db.collection('members')
+						.doc(value.id)
+						.delete()
+						.then(() => {
+							console.log('Chatroom deleted Wuhuu')
+						})
+				})
+
+				.catch(() => {
+					commit('setStatus', 'error')
+					commit(
+						'setErrorMsg',
+						'An error occurred deleting the chatroom. Try again in a moment'
+					)
 				})
 		},
 
@@ -528,6 +556,16 @@ export default new Vuex.Store({
 					{ merge: true }
 				)
 				.then(() => {
+					db.collection('members')
+						.doc(state.currentChatroom.id)
+						.set(
+							{
+								[userId]: true
+							},
+							{ merge: true }
+						)
+				})
+				.then(() => {
 					commit('setStatus', 'success')
 				})
 		},
@@ -538,9 +576,13 @@ export default new Vuex.Store({
 				db.collection('members')
 					.doc(chatroom.id)
 					.onSnapshot(members => {
-						console.log(members.data())
+						if (!members.data()) {
+							return new Error()
+						}
+
 						let memberIds = Object.keys(members.data())
 						let count = 0
+						membersArray = []
 						memberIds.forEach((member, index, array) => {
 							db.collection('users')
 								.doc(member)
@@ -549,12 +591,13 @@ export default new Vuex.Store({
 									count++
 									membersArray.push(member.data())
 									if (count === array.length) {
-										console.log('test 1')
 										resolve()
-										return commit('setMembers', membersArray)
+
+										commit('setMembers', membersArray)
 									}
 								})
-								.catch(() => {
+								.catch(error => {
+									console.log(error)
 									reject()
 									commit('setStatus', 'error')
 									commit(
@@ -568,7 +611,7 @@ export default new Vuex.Store({
 		},
 
 		// Handle getting chatrooms
-		async getChatrooms({ commit, state, dispatch }) {
+		getChatrooms({ commit, state, dispatch }) {
 			commit('setStatus', 'loading')
 			db.collection('user-rooms')
 				// Only find chatrooms that our user is
@@ -578,27 +621,27 @@ export default new Vuex.Store({
 					const rooms = []
 					let ids = Object.keys(roomIds.data())
 					// If there are no rooms return an empty array
-					if (!roomIds.data()) {
+					if (ids.length < 1) {
+						commit('setChatrooms', rooms)
 						commit('setStatus', 'success')
-						return commit('setChatrooms', rooms)
+						return
 					}
 					// We need the keys(chatroom ids) to get the chatroom data
 					// Get the data from all the ids
-					ids.forEach(chatroom => {
+					ids.forEach(chatroomId => {
 						db.collection('chatrooms')
-							.doc(chatroom)
+							.doc(chatroomId)
 							.get()
 							.then(async chatroom => {
 								await dispatch('getChatroomMembers', chatroom)
-
 								rooms.push({
 									...chatroom.data(),
 									id: chatroom.id,
 									members: state.members
 								})
 
-								commit('setStatus', 'success')
 								commit('setChatrooms', rooms)
+								commit('setStatus', 'success')
 							})
 							.catch(() => {
 								commit('setStatus', 'error')
