@@ -570,6 +570,7 @@ export default new Vuex.Store({
 				})
 		},
 
+		// TODO: Make the update live for the user
 		getChatroomMembers({ commit }, chatroom) {
 			return new Promise((resolve, reject) => {
 				let membersArray = []
