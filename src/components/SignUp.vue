@@ -6,22 +6,22 @@
 
 				<div class="input-control">
 					<input type="text" id="name" name="name" required v-model="newUserName" />
-					<label for="name">Fullname</label>
+					<label :class="newUserName !== '' ? 'not-empty' : ''" for="name">Fullname</label>
 				</div>
 
 				<div class="input-control">
 					<input type="email" id="email" name="email" required v-model="newUserEmail" />
-					<label for="email">E-mail</label>
+					<label :class="newUserEmail !== '' ? 'not-empty' : ''" for="email">E-mail</label>
 				</div>
 
 				<div class="input-control">
 					<input type="text" id="username" name="username" required v-model="newUserUserName" />
-					<label for="username">Username</label>
+					<label :class="newUserUserName !== '' ? 'not-empty' : ''" for="username">Username</label>
 				</div>
 
 				<div class="input-control">
 					<input type="password" id="password" name="password" required v-model="newUserPassword" />
-					<label for="password">Password</label>
+					<label :class="newUserPassword !== '' ? 'not-empty' : ''" for="password">Password</label>
 				</div>
 
 				<button type="submit">Create user</button>

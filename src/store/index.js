@@ -22,7 +22,8 @@ export default new Vuex.Store({
 		},
 		currentChatroom: {},
 		currentChatroomMessages: [],
-		errorMsg: ''
+		errorMsg: '',
+		members: null
 	},
 	mutations: {
 		setNewUserEmail(state, value) {
@@ -80,6 +81,13 @@ export default new Vuex.Store({
 
 		setErrorMsg(state, value) {
 			state.errorMsg = value
+		},
+
+		setMembers(state, members) {
+			return new Promise(resolve => {
+				state.members = members
+				resolve()
+			})
 		}
 	},
 
@@ -433,17 +441,30 @@ export default new Vuex.Store({
 		 */
 
 		addNewChatroom({ commit, state }) {
+			let newChatroomId = ''
 			commit('setStatus', 'loading')
 			db.collection('chatrooms')
 				.add({
-					name: state.newChatroom
+					name: state.newChatroom,
+					authorId: state.user.id
 				})
 				.then(chatroomData => {
+					newChatroomId = chatroomData.id
 					db.collection('user-rooms')
 						.doc(state.user.id)
 						.set(
 							{
 								[chatroomData.id]: true
+							},
+							{ merge: true }
+						)
+				})
+				.then(() => {
+					db.collection('members')
+						.doc(newChatroomId)
+						.set(
+							{
+								[state.user.id]: true
 							},
 							{ merge: true }
 						)
@@ -456,18 +477,35 @@ export default new Vuex.Store({
 
 		removeChatroom({ commit, state }, value) {
 			commit('setStatus', 'loading')
-			db.collection('chatrooms')
-				.doc(value.id)
-				.delete()
+			if (value.authorId === state.user.id) {
+				db.collection('chatrooms')
+					.doc(value.id)
+					.delete()
+					.then(() => {
+						console.log('Chatroom deleted')
+					})
+					.catch(() => {
+						commit('setStatus', 'error')
+						commit(
+							'setErrorMsg',
+							'An error occurred deleting the chatroom. Try again in a moment'
+						)
+					})
+			}
+			db.collection('user-rooms')
+				.doc(state.user.id)
+				.update({
+					[value.id]: firebase.firestore.FieldValue.delete()
+				})
 				.then(() => {
-					db.collection('user-rooms')
-						.doc(state.user.id)
+					db.collection('members')
+						.doc(value.id)
 						.update({
-							[value.id]: firebase.firestore.FieldValue.delete()
+							[state.user.id]: firebase.firestore.FieldValue.delete()
 						})
-						.then(() => {
-							commit('setStatus', 'success')
-						})
+				})
+				.then(() => {
+					commit('setStatus', 'success')
 				})
 				.catch(err => {
 					commit('setStatus', 'error')
@@ -494,8 +532,43 @@ export default new Vuex.Store({
 				})
 		},
 
+		getChatroomMembers({ commit }, chatroom) {
+			return new Promise((resolve, reject) => {
+				let membersArray = []
+				db.collection('members')
+					.doc(chatroom.id)
+					.onSnapshot(members => {
+						console.log(members.data())
+						let memberIds = Object.keys(members.data())
+						let count = 0
+						memberIds.forEach((member, index, array) => {
+							db.collection('users')
+								.doc(member)
+								.get()
+								.then(member => {
+									count++
+									membersArray.push(member.data())
+									if (count === array.length) {
+										console.log('test 1')
+										resolve()
+										return commit('setMembers', membersArray)
+									}
+								})
+								.catch(() => {
+									reject()
+									commit('setStatus', 'error')
+									commit(
+										'setStatus',
+										'An error occurred trying to fetch chatrooms. Try again in a moment'
+									)
+								})
+						})
+					})
+			})
+		},
+
 		// Handle getting chatrooms
-		getChatrooms({ commit, state }) {
+		async getChatrooms({ commit, state, dispatch }) {
 			commit('setStatus', 'loading')
 			db.collection('user-rooms')
 				// Only find chatrooms that our user is
@@ -503,20 +576,27 @@ export default new Vuex.Store({
 				.doc(state.user.id)
 				.onSnapshot(roomIds => {
 					const rooms = []
+					let ids = Object.keys(roomIds.data())
 					// If there are no rooms return an empty array
 					if (!roomIds.data()) {
 						commit('setStatus', 'success')
 						return commit('setChatrooms', rooms)
 					}
 					// We need the keys(chatroom ids) to get the chatroom data
-					let ids = Object.keys(roomIds.data())
 					// Get the data from all the ids
 					ids.forEach(chatroom => {
 						db.collection('chatrooms')
 							.doc(chatroom)
 							.get()
-							.then(chatroom => {
-								rooms.push({ ...chatroom.data(), id: chatroom.id })
+							.then(async chatroom => {
+								await dispatch('getChatroomMembers', chatroom)
+
+								rooms.push({
+									...chatroom.data(),
+									id: chatroom.id,
+									members: state.members
+								})
+
 								commit('setStatus', 'success')
 								commit('setChatrooms', rooms)
 							})

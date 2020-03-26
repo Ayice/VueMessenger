@@ -6,6 +6,9 @@
 				<b v-if="chatroom.lastSender === user.id">You:</b>
 				{{ chatroom.lastMessage }}...
 			</p>
+			<ul>
+				<li v-for="member in chatroom.members" :key="member">{{member.username}}</li>
+			</ul>
 			<span class="remove" @click="removeChatroom(chatroom)">X</span>
 		</div>
 	</router-link>
