@@ -25,8 +25,10 @@
 			</span>
 		</div>
 
-		<div class="chat-options-div" :class="showAddMenu ? 'show' :''">
-			<button @click="showAddMenu = !showAddMenu">Add</button>
+		<div class="chat-options-div" :class="showAddMenu ? 'show' : ''">
+			<div class="chat-options-button" @click="showAddMenu = !showAddMenu">
+				<GearsIcon />
+			</div>
 			<section class="add-section">
 				<h2>Add Friend to Chat</h2>
 				<Friends :remove="false" />
@@ -42,11 +44,12 @@
 	import PaperPlane from './icons/PaperPlane.vue'
 	import Message from './Message'
 	import Friends from './Friends'
+	import GearsIcon from './icons/GearsIcon'
 
 	export default {
 		name: 'Chatroom',
 		props: ['id'],
-		components: { PaperPlane, Message, Friends },
+		components: { PaperPlane, Message, Friends, GearsIcon },
 		data() {
 			return {
 				newMessage: '',
@@ -220,10 +223,25 @@
 				}
 			}
 
-			button {
+			.chat-options-button {
+				cursor: pointer;
+				border: 1px solid rgba(187, 187, 187, 0.643);
 				pointer-events: all;
+				padding: 0.2em;
 				z-index: 100;
 				position: relative;
+				height: 40px;
+				width: 40px;
+
+				svg {
+					transition: all 0.1s ease-in;
+				}
+
+				&:hover {
+					svg {
+						fill: rgb(197, 197, 197);
+					}
+				}
 			}
 		}
 
