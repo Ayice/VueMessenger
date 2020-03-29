@@ -78,7 +78,7 @@
 		</form>
 
 		<section>
-			<button @click="showModal = true">Delete User</button>
+			<button @click="deleteUser(user)">Delete User</button>
 
 			<Modal
 				v-if="showModal"
@@ -145,6 +145,14 @@
 				if (this.samePassword) {
 					this.updateUserPassword(this.confirmPassword)
 				}
+			},
+
+			deleteUser(user) {
+				this.showModal = true
+				this.modalText = `Hi ${user.username} are you sure you want to delete your account?`
+				this.modalTitle = 'Delete account'
+				this.modalFunc = 'deleteUser'
+				this.modalData = user
 			}
 		},
 

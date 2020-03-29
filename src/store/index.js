@@ -159,27 +159,30 @@ export default new Vuex.Store({
 					)
 				})
 		},
+
 		/*
 		 *
 		 * Places to delete from:
 		 *
 		 * users [✔️]
-		 * members
-		 * contacts
-		 * user-rooms
-		 * chatrooms where authorId === userId
+		 * Google auth []
+		 * members []
+		 * contacts []
+		 * user-rooms []
+		 * chatrooms where authorId === userId []
 		 *
 		 *
 		 */
 
-		deleteUser({ commit }, userId) {
+		deleteUser({ commit }, user) {
+			console.log(user)
 			commit('setStatus', 'loading')
-			db.collection('users')
-				.doc(userId)
-				.delete()
-				.then(() => {
-					commit('setStatus', 'success')
-				})
+			// db.collection('users')
+			// 	.doc(user.id)
+			// 	.delete()
+			// 	.then(() => {
+			// 	})
+			commit('setStatus', 'success')
 		},
 
 		checkUserName({ commit }, username) {
