@@ -5,8 +5,8 @@
 		</div>
 
 		<div class="profile-info">
-			<h1>{{userProfile.name}}</h1>
-			<h2>aka. {{userProfile.username}}</h2>
+			<h1>{{ userProfile.name }}</h1>
+			<h2>aka. {{ userProfile.username }}</h2>
 			<router-link :to="'/update-profile/' + user.id">Update your profile</router-link>
 
 			<Friends v-if="userProfile.id === user.id" :remove="true" />
