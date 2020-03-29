@@ -78,15 +78,9 @@
 		</form>
 
 		<section>
-			<button @click="deleteUser(user)">Delete User</button>
+			<button @click="deleteUser = true">Delete User</button>
 
-			<Modal
-				v-if="showModal"
-				:title="modalTitle"
-				:text="modalText"
-				:action="modalFunc"
-				:data="modalData"
-			/>
+			<ReAuth v-if="deleteUser" />
 		</section>
 	</section>
 	<div v-else>
@@ -98,22 +92,18 @@
 
 <script>
 	import { mapState, mapActions } from 'vuex'
-	import Modal from './Modal'
+	import ReAuth from './ReAuth'
 	export default {
 		props: ['id'],
-		components: { Modal },
+		components: { ReAuth },
 		data() {
 			return {
-				modalText: '',
-				modalTitle: '',
-				modalData: '',
-				modalFunc: '',
-				showModal: false,
 				form: {
 					name: '',
 					email: '',
 					username: ''
 				},
+				deleteUser: false,
 				updatePassword: false,
 				confirmPassword: '',
 				password: '',
@@ -145,14 +135,6 @@
 				if (this.samePassword) {
 					this.updateUserPassword(this.confirmPassword)
 				}
-			},
-
-			deleteUser(user) {
-				this.showModal = true
-				this.modalText = `Hi ${user.username} are you sure you want to delete your account?`
-				this.modalTitle = 'Delete account'
-				this.modalFunc = 'deleteUser'
-				this.modalData = user
 			}
 		},
 
