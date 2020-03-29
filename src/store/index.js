@@ -164,8 +164,8 @@ export default new Vuex.Store({
 		 *
 		 * Places to delete from:
 		 *
-		 * users [✔️]
-		 * Google auth []
+		 * users [✔]
+		 * Google auth [✔]
 		 * members []
 		 * contacts []
 		 * user-rooms []
@@ -174,9 +174,28 @@ export default new Vuex.Store({
 		 *
 		 */
 
-		deleteUser({ commit }, user) {
-			console.log(user)
+		async deleteUser({ commit }, credential) {
+			console.log(credential)
 			commit('setStatus', 'loading')
+			// const curUser = firebase.auth().currentUser
+			// To delete an account the user needs to have
+			// signed in recently, otherwise we can reauthenticate
+			// With this:
+			/**
+			 *
+			 * 	const credential = Log in again
+			 *  await curUser.delete
+			 * Prompt the user to re-provide their sign-in credentials
+			 * user.reauthenticateWithCredential(credential)
+			 *	.then(() => {
+			 * 		User re-authenticated.
+			 * 	})
+			 * 	.catch(() => {
+			 *  	An error happened.
+			 * 	})
+			 *
+			 */
+
 			// db.collection('users')
 			// 	.doc(user.id)
 			// 	.delete()
