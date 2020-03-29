@@ -73,19 +73,42 @@
 
 				<button type="submit">Update password</button>
 
-				<p>{{errorMsg}}</p>
+				<p>{{ errorMsg }}</p>
 			</fieldset>
 		</form>
+
+		<section>
+			<button @click="showModal = true">Delete User</button>
+
+			<Modal
+				v-if="showModal"
+				:title="modalTitle"
+				:text="modalText"
+				:action="modalFunc"
+				:data="modalData"
+			/>
+		</section>
 	</section>
-	<div v-else>{{router.push('/')}}</div>
+	<div v-else>
+		<h1>You need to be logged in to update Your profile</h1>
+
+		<router-link to="/">Log in</router-link>
+	</div>
 </template>
 
 <script>
 	import { mapState, mapActions } from 'vuex'
+	import Modal from './Modal'
 	export default {
 		props: ['id'],
+		components: { Modal },
 		data() {
 			return {
+				modalText: '',
+				modalTitle: '',
+				modalData: '',
+				modalFunc: '',
+				showModal: false,
 				form: {
 					name: '',
 					email: '',
