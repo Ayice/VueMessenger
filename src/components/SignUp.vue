@@ -5,23 +5,64 @@
 				<legend>Sign up</legend>
 
 				<div class="input-control">
-					<input type="text" id="name" name="name" required v-model="newUserName" />
-					<label :class="newUserName !== '' ? 'not-empty' : ''" for="name">Fullname</label>
+					<input
+						type="text"
+						id="name"
+						name="name"
+						required
+						v-model="newUserName"
+					/>
+					<label :class="newUserName !== '' ? 'not-empty' : ''" for="name"
+						>Fullname</label
+					>
 				</div>
 
 				<div class="input-control">
-					<input type="email" id="email" name="email" required v-model="newUserEmail" />
-					<label :class="newUserEmail !== '' ? 'not-empty' : ''" for="email">E-mail</label>
+					<input
+						type="email"
+						id="email"
+						name="email"
+						required
+						v-model="newUserEmail"
+					/>
+					<label :class="newUserEmail !== '' ? 'not-empty' : ''" for="email"
+						>E-mail</label
+					>
 				</div>
 
 				<div class="input-control">
-					<input type="text" id="username" name="username" required v-model="newUserUserName" />
-					<label :class="newUserUserName !== '' ? 'not-empty' : ''" for="username">Username</label>
+					<input
+						type="text"
+						id="username"
+						name="username"
+						required
+						v-model="newUserUserName"
+					/>
+					<label
+						:class="newUserUserName !== '' ? 'not-empty' : ''"
+						for="username"
+						>Username</label
+					>
 				</div>
 
 				<div class="input-control">
-					<input type="password" id="password" name="password" required v-model="newUserPassword" />
-					<label :class="newUserPassword !== '' ? 'not-empty' : ''" for="password">Password</label>
+					<input
+						type="password"
+						id="password"
+						name="password"
+						required
+						v-model="newUserPassword"
+					/>
+					<label
+						:class="newUserPassword !== '' ? 'not-empty' : ''"
+						for="password"
+						>Password</label
+					>
+				</div>
+
+				<div class="input-control">
+					<input type="file" name="avatar" id="avatar" @change="avatarUpload" />
+					<label for="avatar">Upload profile Picture</label>
 				</div>
 
 				<button type="submit">Create user</button>
@@ -31,11 +72,13 @@
 </template>
 
 <script>
-	import { mapActions } from 'vuex'
+	import { mapActions, mapMutations } from 'vuex'
 
 	export default {
 		name: 'SignUp',
+
 		methods: {
+			...mapMutations(['avatarUpload']),
 			...mapActions(['addNewUser'])
 		},
 		computed: {
@@ -78,5 +121,8 @@
 	}
 </script>
 
-<style>
+<style lang="scss">
+	label[for='avatar'] {
+		position: relative !important;
+	}
 </style>
