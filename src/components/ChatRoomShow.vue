@@ -1,15 +1,20 @@
 <template>
-	<router-link class="chatroom-link" :to="{name: 'Chatroom', params: {id: chatroom.id}}">
+	<router-link
+		class="chatroom-link"
+		:to="{ name: 'Chatroom', params: { id: chatroom.id } }"
+	>
 		<div>
-			<p class="h2">{{chatroom.name}}</p>
+			<p class="h2">{{ chatroom.name }}</p>
 			<ul>
-				<li v-for="member in chatroom.members" :key="member.id">{{member.username}}</li>
+				<li v-for="member in chatroom.members" :key="member.id">
+					{{ member.username }}
+				</li>
 			</ul>
 			<p class="last-message">
 				<b v-if="chatroom.lastSender === user.id">You:</b>
 				{{ chatroom.lastMessage }}...
 			</p>
-			<span class="remove" @click="removeChatroom(chatroom)">X</span>
+			<span class="remove" @click="leaveChatroom(chatroom)">X</span>
 		</div>
 	</router-link>
 </template>
@@ -22,7 +27,7 @@
 		props: { chatroom: Object },
 
 		methods: {
-			...mapActions(['removeChatroom'])
+			...mapActions(['leaveChatroom'])
 		},
 		computed: mapState(['user'])
 	}
