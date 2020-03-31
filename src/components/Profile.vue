@@ -1,7 +1,7 @@
 <template>
 	<section class="profile" v-if="userProfile !== null">
 		<div class="profile-pic">
-			<img :src="user.avatarUrl" alt="profile pic" />
+			<img :src="userProfile.avatarUrl" alt="profile pic" />
 		</div>
 
 		<div class="profile-info">
