@@ -166,41 +166,102 @@ export default new Vuex.Store({
 		 *
 		 * users [✔]
 		 * Google auth [✔]
-		 * members []
+		 * members [✔]
 		 * contacts []
-		 * user-rooms []
-		 * chatrooms where authorId === userId []
+		 * user-rooms [✔]
+		 * chatrooms where authorId === userId [✔]
 		 *
 		 *
 		 */
 
-		async deleteUser({ commit }, credential) {
-			console.log(credential)
+		deleteUser({ commit }, data) {
 			commit('setStatus', 'loading')
-			// const curUser = firebase.auth().currentUser
+			let userCred = { email: data.email, password: data.password }
 			// To delete an account the user needs to have
 			// signed in recently, otherwise we can reauthenticate
 			// With this:
-			/**
-			 *
-			 * 	const credential = Log in again
-			 *  await curUser.delete
-			 * Prompt the user to re-provide their sign-in credentials
-			 * user.reauthenticateWithCredential(credential)
-			 *	.then(() => {
-			 * 		User re-authenticated.
-			 * 	})
-			 * 	.catch(() => {
-			 *  	An error happened.
-			 * 	})
-			 *
-			 */
+			// Prompt the user to re-provide their sign-in credentials
+			const user = firebase.auth().currentUser
+			let credential = firebase.auth.EmailAuthProvider.credential(
+				userCred.email,
+				userCred.password
+			)
+			user
+				.reauthenticateWithCredential(credential)
+				.then(async () => {
+					await db
+						.collection('users')
+						.doc(user.uid)
+						.delete()
+						.then(() => console.log('deleted from user collection'))
+					await db
+						.collection('user-rooms')
+						.doc(user.uid)
+						.get()
+						.then(roompairs => {
+							let roomIds = Object.keys(roompairs.data())
+							roomIds.forEach(roomId => {
+								db.collection('members')
+									.doc(roomId)
+									.update({
+										[user.uid]: firebase.firestore.FieldValue.delete()
+									})
+									.then(() => {
+										db.collection('members')
+											.doc(roomId)
+											.delete()
+									})
+							})
+						})
+						.then(() => {
+							db.collection('user-rooms')
+								.doc(user.uid)
+								.delete()
+								.then(() => console.log('deleted from user-rooms'))
+						})
+						.then(() => {
+							db.collection('contacts')
+								.doc(user.uid)
+								.get()
+								.then(friendPairs => {
+									let friendIds = Object.keys(friendPairs.data())
+									friendIds.forEach(friendId => {
+										db.collection('contacts')
+											.doc(friendId)
+											.update({
+												[user.uid]: firebase.firestore.FieldValue.delete()
+											})
+											.then(() =>
+												console.log(`Deleted you as a friend from ${friendId}`)
+											)
+									})
+								})
+								.then(() => {
+									db.collection('contacts')
+										.doc(user.uid)
+										.delete()
+										.then(() => console.log('deleted from contacts collection'))
+								})
+								.then(() => {
+									db.collection('chatrooms')
+										.where('authorId', '==', user.uid)
+										.get()
+										.then(chatrooms => {
+											chatrooms.forEach(doc => {
+												doc.ref.delete()
+											})
+										})
+										.then(() =>
+											console.log('deleted chatrooms you were the founder of')
+										)
+								})
+								.then(() => {
+									user.delete().then(() => console.log('deleted from Auth'))
+								})
+						})
+				})
+				.catch(() => {})
 
-			// db.collection('users')
-			// 	.doc(user.id)
-			// 	.delete()
-			// 	.then(() => {
-			// 	})
 			commit('setStatus', 'success')
 		},
 
@@ -519,20 +580,22 @@ export default new Vuex.Store({
 				})
 		},
 
-		leaveChatroom({ dispatch, commit, state }, chatroom) {
+		async leaveChatroom({ dispatch, commit, state }, chatroom) {
 			commit('setStatus', 'loading')
 
 			if (chatroom.authorId === state.user.id) {
 				dispatch('removeChatroom', chatroom)
 			} else {
-				db.collection('members')
+				await db
+					.collection('members')
 					.doc(chatroom.id)
 					.update({
 						[state.user.id]: firebase.firestore.FieldValue.delete()
 					})
 			}
 
-			db.collection('user-rooms')
+			await db
+				.collection('user-rooms')
 				.doc(state.user.id)
 				.update({
 					[chatroom.id]: firebase.firestore.FieldValue.delete()
@@ -576,7 +639,7 @@ export default new Vuex.Store({
 						.doc(value.id)
 						.delete()
 						.then(() => {
-							console.log('Chatroom deleted Wuhuu')
+							console.log('Chatroom deleted')
 						})
 				})
 
@@ -664,13 +727,13 @@ export default new Vuex.Store({
 				.doc(state.user.id)
 				.onSnapshot(roomIds => {
 					const rooms = []
-					let ids = Object.keys(roomIds.data())
-					// If there are no rooms return an empty array
-					if (ids.length < 1) {
+					if (!roomIds.exists) {
 						commit('setChatrooms', rooms)
 						commit('setStatus', 'success')
 						return
 					}
+					let ids = Object.keys(roomIds.data())
+					// If there are no rooms return an empty array
 					// We need the keys(chatroom ids) to get the chatroom data
 					// Get the data from all the ids
 					ids.forEach(chatroomId => {

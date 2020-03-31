@@ -1,86 +1,109 @@
 <template>
 	<section v-if="id === user.id">
-		<form @submit.prevent="handleUpdate">
-			<fieldset>
-				<legend>Update your profile</legend>
-				<div class="input-control">
-					<input
-						id="name"
-						type="text"
-						name="name"
-						v-model="form.name"
-						:class="form.name !== '' ? 'not-empty' : ''"
-					/>
-					<label :class="form.name !== '' ? 'not-empty' : ''" for="name">Full name</label>
-				</div>
+		<section :class="showDeleteForm ? 'blur' : ''">
+			<form @submit.prevent="handleUpdate">
+				<fieldset>
+					<legend>Update your profile</legend>
+					<div class="input-control">
+						<input
+							id="name"
+							type="text"
+							name="name"
+							v-model="form.name"
+							:class="form.name !== '' ? 'not-empty' : ''"
+						/>
+						<label :class="form.name !== '' ? 'not-empty' : ''" for="name"
+							>Full name</label
+						>
+					</div>
 
-				<div class="input-control">
-					<input
-						type="text"
-						id="username"
-						name="username"
-						v-model="form.username"
-						:class="form.username !== '' ? 'not-empty' : ''"
-					/>
-					<label :class="form.username !== '' ? 'not-empty' : ''" for="username">Username</label>
-				</div>
+					<div class="input-control">
+						<input
+							type="text"
+							id="username"
+							name="username"
+							v-model="form.username"
+							:class="form.username !== '' ? 'not-empty' : ''"
+						/>
+						<label
+							:class="form.username !== '' ? 'not-empty' : ''"
+							for="username"
+							>Username</label
+						>
+					</div>
 
-				<div class="input-control">
-					<input
-						type="email"
-						name="email"
-						id="email"
-						v-model="form.email"
-						:class="form.email !== '' ? 'not-empty' : ''"
-					/>
-					<label :class="form.email !== '' ? 'not-empty' : ''" for="email">Email</label>
-				</div>
+					<div class="input-control">
+						<input
+							type="email"
+							name="email"
+							id="email"
+							v-model="form.email"
+							:class="form.email !== '' ? 'not-empty' : ''"
+						/>
+						<label :class="form.email !== '' ? 'not-empty' : ''" for="email"
+							>Email</label
+						>
+					</div>
 
-				<button type="submit">Update Profile</button>
-			</fieldset>
-		</form>
+					<button type="submit">Update Profile</button>
+				</fieldset>
+			</form>
 
-		<button @click="updatePassword = !updatePassword">Update your password</button>
+			<button @click="updatePassword = !updatePassword">
+				Update your password
+			</button>
 
-		<form v-if="updatePassword" @submit.prevent="handleUpdatePassword" class="update-password">
-			<fieldset :class="samePassword ? 'correctPassword' : ''">
-				<legend>Update Password</legend>
+			<form
+				v-if="updatePassword"
+				@submit.prevent="handleUpdatePassword"
+				class="update-password"
+			>
+				<fieldset :class="samePassword ? 'correctPassword' : ''">
+					<legend>Update Password</legend>
 
-				<div class="input-control">
-					<input
-						:class="password !== '' ? 'not-empty' : ''"
-						type="password"
-						v-model="password"
-						name="password"
-						id="password"
-					/>
-					<label :class="password !== '' ? 'not-empty' : ''" for="password">Password</label>
-				</div>
+					<div class="input-control">
+						<input
+							:class="password !== '' ? 'not-empty' : ''"
+							type="password"
+							v-model="password"
+							name="password"
+							id="password"
+						/>
+						<label :class="password !== '' ? 'not-empty' : ''" for="password"
+							>Password</label
+						>
+					</div>
 
-				<div class="input-control">
-					<input
-						:class="confirmPassword !== '' ? 'not-empty' : ''"
-						type="password"
-						v-model="confirmPassword"
-						name="confirmPassword"
-						id="confirmPassword"
-					/>
-					<label
-						:class="confirmPassword !== '' ? 'not-empty' : ''"
-						for="confirmPassword"
-					>Confirm Password</label>
-				</div>
+					<div class="input-control">
+						<input
+							:class="confirmPassword !== '' ? 'not-empty' : ''"
+							type="password"
+							v-model="confirmPassword"
+							name="confirmPassword"
+							id="confirmPassword"
+						/>
+						<label
+							:class="confirmPassword !== '' ? 'not-empty' : ''"
+							for="confirmPassword"
+							>Confirm Password</label
+						>
+					</div>
 
-				<button type="submit">Update password</button>
+					<button type="submit">Update password</button>
 
-				<p>{{ errorMsg }}</p>
-			</fieldset>
-		</form>
+					<p>{{ errorMsg }}</p>
+				</fieldset>
+			</form>
+			<button @click="showDeleteForm = true">Delete User</button>
+		</section>
 
 		<section>
-			<button @click="deleteUser = true">Delete User</button>
-
-			<ReAuth v-if="deleteUser" />
+			<transition name="slide-up">
+				<ReAuth
+					v-show="showDeleteForm"
+					v-on:cancelRemove="handleCancelRemove"
+				/>
+			</transition>
 		</section>
 	</section>
 	<div v-else>
@@ -90,7 +113,7 @@
 	</div>
 </template>
 
-<script>
+<script lang="js">
 	import { mapState, mapActions } from 'vuex'
 	import ReAuth from './ReAuth'
 	export default {
@@ -103,7 +126,7 @@
 					email: '',
 					username: ''
 				},
-				deleteUser: false,
+				showDeleteForm: false,
 				updatePassword: false,
 				confirmPassword: '',
 				password: '',
@@ -112,6 +135,9 @@
 		},
 
 		methods: {
+			handleCancelRemove() {
+				this.showDeleteForm = false
+			},
 			...mapActions(['updateUser', 'updateUserPassword']),
 			handleUpdate() {
 				const userUpdateData = {}
@@ -161,6 +187,19 @@
 </script>
 
 <style lang="scss" scoped>
+	.slide-up-enter-active {
+		transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+	}
+
+	.slide-up-enter,
+	.slide-up-leave-to {
+		transform: translateY(20px);
+	}
+
+	.blur {
+		pointer-events: none;
+		filter: blur(10px);
+	}
 	.update-password {
 		fieldset {
 			padding: 1em;
