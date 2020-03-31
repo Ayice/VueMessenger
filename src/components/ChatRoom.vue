@@ -42,9 +42,9 @@
 	import { mapState, mapActions } from 'vuex'
 	import firebase from 'firebase'
 	import PaperPlane from './icons/PaperPlane.vue'
-	import Message from './Message'
-	import Friends from './Friends'
-	import GearsIcon from './icons/GearsIcon'
+	import Message from './Message.vue'
+	import Friends from './Friends.vue'
+	import GearsIcon from './icons/GearsIcon.vue'
 
 	export default {
 		name: 'Chatroom',
@@ -56,25 +56,6 @@
 				showAddMenu: false
 			}
 		},
-
-		computed: {
-			...mapState({
-				user: state => state.user,
-				currentChatroom: state => state.currentChatroom,
-				currentChatroomMessages: state => state.currentChatroomMessages
-			})
-		},
-
-		watch: {
-			id() {
-				this.getCurrentChatroom(this.id)
-			}
-		},
-
-		mounted() {
-			this.getCurrentChatroom(this.id)
-		},
-
 		methods: {
 			...mapActions(['getCurrentChatroom', 'getCurrentChatoomMessages']),
 
@@ -112,6 +93,24 @@
 						document.querySelector('.new-message').innerHTML = ''
 					})
 			}
+		},
+
+		watch: {
+			id() {
+				this.getCurrentChatroom(this.id)
+			}
+		},
+
+		mounted() {
+			this.getCurrentChatroom(this.id)
+		},
+
+		computed: {
+			...mapState({
+				user: state => state.user,
+				currentChatroom: state => state.currentChatroom,
+				currentChatroomMessages: state => state.currentChatroomMessages
+			})
 		}
 	}
 </script>
