@@ -1,32 +1,39 @@
 <template>
 	<div class="app">
+		<!-- <Test /> -->
 		<div v-if="status === 'loading'" class="loader">
 			<h1>LOADING...</h1>
 		</div>
 
 		<div v-else-if="status === 'error'" class="loader">
 			<h1>An Error occured, try again..</h1>
-			<p>{{errorMsg}}</p>
+			<p>{{ errorMsg }}</p>
 			<button @click="removeError()">Try again...</button>
 		</div>
 
-		<div class="router-container" :class="{ loading : status !== 'success' }">
+		<div class="router-container" :class="{ loading: status !== 'success' }">
 			<div class="nav">
 				<router-link to="/">Home</router-link>|
 				<router-link to="/signup" v-if="!user">Create User</router-link>|
-				<router-link :to="'/profile/' + user.id" v-if="user !== null">Profile</router-link>|
+				<router-link :to="'/profile/' + user.id" v-if="user !== null"
+					>Profile</router-link
+				>|
 				<router-link to="/about">About</router-link>
 
 				<button @click="logout">Log out</button>
 			</div>
-			<router-view />
+			<transition name="slide-in">
+				<router-view />
+			</transition>
 		</div>
 	</div>
 </template>
 
 <script>
 	import { mapState, mapActions } from 'vuex'
+	// import Test from './compon ents/Test.vue'
 	export default {
+		// components: { Test },
 		computed: {
 			...mapState(['user', 'status', 'errorMsg'])
 		},
@@ -40,6 +47,15 @@
 </script>
 
 <style lang="scss">
+	.slide-in-enter-active {
+		transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+	}
+
+	.slide-in-enter,
+	.slide-in-leave-to {
+		transform: translateY(20px);
+	}
+
 	.app {
 		font-size: 16px;
 		font-weight: 700;
