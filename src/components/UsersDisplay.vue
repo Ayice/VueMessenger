@@ -6,8 +6,11 @@
 	<section v-else class="users">
 		<div v-for="allUser in allUsers" :key="allUser.id" class="user">
 			<span class="add" @click="addFriend(allUser)"></span>
+			<span class="user-profile-pic">
+				<img :src="allUser.avatarUrl" :alt="allUser.username" />
+			</span>
 			<router-link :to="'/profile/' + allUser.id">
-				<p>{{allUser.username}}</p>
+				<p>{{ allUser.username }}</p>
 			</router-link>
 		</div>
 		<Modal
@@ -56,21 +59,41 @@
 	}
 </script>
 
-<style lang="scss" >
+<style lang="scss">
 	.users {
 		width: 20%;
 		position: relative;
 
 		.user {
+			display: flex;
+			flex-direction: row;
 			padding: 1em 0;
 			margin: 10px 0px;
 			width: 100%;
 			box-shadow: 4px 5px 8px rgba(104, 103, 103, 0.133);
 			text-align: center;
 
+			a {
+				width: 50%;
+			}
 			p {
-				font-size: 1.2em;
+				text-align: center;
+				font-size: 0.8em;
 				font-weight: 500;
+			}
+			.user-profile-pic {
+				display: block;
+				position: relative;
+				width: 50px;
+				height: 50px;
+				border-radius: 50%;
+				overflow: hidden;
+
+				img {
+					position: absolute;
+					width: 100%;
+					left: 0;
+				}
 			}
 
 			.add {
