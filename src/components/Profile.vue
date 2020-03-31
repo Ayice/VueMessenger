@@ -1,13 +1,15 @@
 <template>
 	<section class="profile" v-if="userProfile !== null">
 		<div class="profile-pic">
-			<img src alt="profile pic" />
+			<img :src="user.avatarUrl" alt="profile pic" />
 		</div>
 
 		<div class="profile-info">
 			<h1>{{ userProfile.name }}</h1>
 			<h2>aka. {{ userProfile.username }}</h2>
-			<router-link :to="'/update-profile/' + user.id">Update your profile</router-link>
+			<router-link :to="'/update-profile/' + user.id"
+				>Update your profile</router-link
+			>
 
 			<Friends v-if="userProfile.id === user.id" :remove="true" />
 		</div>
