@@ -39,6 +39,7 @@
 				modalData: null
 			}
 		},
+
 		methods: {
 			addFriend(newFriend) {
 				this.showModal = true
@@ -49,10 +50,12 @@
 				this.modalData = newFriend
 			}
 		},
+
 		computed: {
 			...mapState(['allUsers', 'user', 'status']),
 			...mapActions(['addNewFriend'])
 		},
+
 		mounted() {
 			this.$store.dispatch('allUsers')
 		}
