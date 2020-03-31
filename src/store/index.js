@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import router from '../router'
-import { db } from '../firebase/firebase'
+import { db, storage } from '../firebase/firebase'
 import firebase from 'firebase'
 
 Vue.use(Vuex)
@@ -18,8 +18,10 @@ export default new Vuex.Store({
 			name: '',
 			username: '',
 			password: '',
-			email: ''
+			email: '',
+			avatarUrl: ''
 		},
+		newAvatar: null,
 		currentChatroom: {},
 		currentChatroomMessages: [],
 		errorMsg: '',
@@ -88,6 +90,13 @@ export default new Vuex.Store({
 				state.members = members
 				resolve()
 			})
+		},
+		avatarUpload(state, value) {
+			state.newAvatar = value.target.files[0]
+		},
+
+		setNewAvatarUrl(state, avatarUrl) {
+			state.newUser.avatarUrl = avatarUrl
 		}
 	},
 
@@ -98,25 +107,33 @@ export default new Vuex.Store({
 		 *
 		 */
 
-		addNewUser({ commit, state }) {
+		async addNewUser({ dispatch, commit, state }) {
+			commit('setStatus', 'loading')
+			let newUserId = null
 			firebase
 				.auth()
 				.createUserWithEmailAndPassword(
 					state.newUser.email,
 					state.newUser.password
 				)
-				.then(response => {
+				.then(async response => {
+					console.log(response)
+					const id = response.user.uid
+					newUserId = id
+					await dispatch('uploadAvatar', id)
 					db.collection('users')
-						.doc(response.user.uid)
+						.doc(id)
 						.set({
-							name: state.newUser.name,
-							username: state.newUser.username,
-							email: state.newUser.email,
-							id: response.user.uid
+							id: id,
+							...state.newUser
 						})
+				})
+				.then(async () => {
+					await dispatch('checkUser', { id: newUserId })
 				})
 				.then(() => {
 					alert('You created a user')
+					commit('setStatus', 'success')
 					router.push('/')
 				})
 				.catch(() => {
@@ -126,6 +143,31 @@ export default new Vuex.Store({
 						'Something went wrong with creating a user. Try again'
 					)
 				})
+		},
+
+		async uploadAvatar({ commit, state }, id) {
+			return new Promise((resolve, reject) => {
+				let storageRef = storage.ref()
+				let profilePicRef = storageRef.child('profile-pics/' + id)
+				profilePicRef
+					.put(state.newAvatar)
+					.then(() => {
+						profilePicRef
+							.getDownloadURL()
+							.then(url => {
+								console.log(url)
+								commit('setNewAvatarUrl', url)
+							})
+							.then(() => {
+								console.log("You've been resolved!")
+								resolve()
+							})
+					})
+					.catch(() => {
+						console.log("You've been rejected!")
+						reject()
+					})
+			})
 		},
 
 		async updateUser({ state, commit, dispatch }, value) {
@@ -350,6 +392,7 @@ export default new Vuex.Store({
 		checkUser({ commit }, user) {
 			// Returning promise, so our login action from earlier know
 			// when this is done.
+			console.log(user)
 			let id = ''
 
 			if (user.id) {
