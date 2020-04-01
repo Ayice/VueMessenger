@@ -8,8 +8,8 @@
 		<span
 			class="remove"
 			@click.prevent="
-				chatroom ? addToChatroom(user.id) : addFriend(user),
-					remove ? removeFriendModal(user) : addFriend(user)
+				chatroom ? addToChatModal(user) : addFriend(user),
+					remove ? removeFriendModal(user) : null
 			"
 		>
 			<button v-if="remove">Remove</button>

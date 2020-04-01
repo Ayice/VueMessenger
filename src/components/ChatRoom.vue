@@ -15,7 +15,7 @@
 			<div
 				class="new-message"
 				:class="newMessage !== '' ? 'hide-placeholder' : ''"
-				@keydown.enter.exact.prevent="sendMsg($event)"
+				@keydown.enter.exact.prevent="sendMsg()"
 				@input="handleChange($event)"
 				contenteditable="true"
 			></div>
@@ -31,7 +31,13 @@
 			</div>
 			<section class="add-section">
 				<h2>Add Friend to Chat</h2>
-				<Friends :remove="false" />
+				<UserView
+					v-for="friend in friends"
+					:key="friend.id"
+					:chatroom="true"
+					:remove="false"
+					:user="friend"
+				/>
 			</section>
 		</div>
 	</div>
@@ -43,13 +49,13 @@
 	import firebase from 'firebase'
 	import PaperPlane from './icons/PaperPlane.vue'
 	import Message from './Message.vue'
-	import Friends from './Friends.vue'
+	import UserView from './UserView.vue'
 	import GearsIcon from './icons/GearsIcon.vue'
 
 	export default {
 		name: 'Chatroom',
 		props: ['id'],
-		components: { PaperPlane, Message, Friends, GearsIcon },
+		components: { PaperPlane, Message, UserView, GearsIcon },
 		data() {
 			return {
 				newMessage: '',
@@ -109,7 +115,8 @@
 			...mapState({
 				user: state => state.user,
 				currentChatroom: state => state.currentChatroom,
-				currentChatroomMessages: state => state.currentChatroomMessages
+				currentChatroomMessages: state => state.currentChatroomMessages,
+				friends: state => state.friends
 			})
 		}
 	}
