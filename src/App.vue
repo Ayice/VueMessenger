@@ -13,7 +13,7 @@
 
 		<div
 			class="router-container"
-			:class="{ loading: status !== 'success', loading: showModal }"
+			:class="{ loading: status !== 'success' || showModal }"
 		>
 			<div class="nav">
 				<router-link to="/">Home</router-link>|
@@ -107,16 +107,6 @@
 
 		h1 {
 			font-size: 2em;
-		}
-	}
-
-	.remove {
-		font-weight: 700;
-		cursor: pointer;
-		transition: all 1s cubic-bezier(0.165, 0.84, 0.44, 1);
-
-		&:hover {
-			transform: rotate(360deg);
 		}
 	}
 
