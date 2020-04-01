@@ -198,18 +198,6 @@
 			margin-bottom: 2em;
 		}
 
-		@keyframes paperPlane {
-			0% {
-				transform: translateY(0) rotateZ(0);
-			}
-			50% {
-				transform: translateY(-10px);
-			}
-			100% {
-				transform: translateY(0) rotateZ(0);
-			}
-		}
-
 		.chat-options-div {
 			position: absolute;
 			top: 5%;
@@ -266,6 +254,10 @@
 			box-shadow: 0px 0px 8px #333;
 			transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
 			padding: 2em 1em 0;
+
+			.friend {
+				width: 80%;
+			}
 		}
 
 		.slide-enter-active {
@@ -280,6 +272,18 @@
 		.slide-fade-leave-to {
 			transform: translateX(-10px);
 			opacity: 0;
+		}
+
+		@keyframes paperPlane {
+			0% {
+				transform: translateY(0) rotateZ(0);
+			}
+			50% {
+				transform: translateY(-10px);
+			}
+			100% {
+				transform: translateY(0) rotateZ(0);
+			}
 		}
 	}
 </style>
