@@ -11,7 +11,10 @@
 			<button @click="removeError()">Try again...</button>
 		</div>
 
-		<div class="router-container" :class="{ loading: status !== 'success' }">
+		<div
+			class="router-container"
+			:class="{ loading: status !== 'success', loading: showModal }"
+		>
 			<div class="nav">
 				<router-link to="/">Home</router-link>|
 				<router-link to="/signup" v-if="!user">Create User</router-link>|
@@ -26,16 +29,18 @@
 				<router-view />
 			</transition>
 		</div>
+		<Modal />
 	</div>
 </template>
 
 <script>
 	import { mapState, mapActions } from 'vuex'
+	import Modal from './components/Modal.vue'
 	// import Test from './compon ents/Test.vue'
 	export default {
-		// components: { Test },
+		components: { Modal },
 		computed: {
-			...mapState(['user', 'status', 'errorMsg'])
+			...mapState(['user', 'status', 'errorMsg', 'showModal'])
 		},
 		methods: {
 			...mapActions(['logout']),

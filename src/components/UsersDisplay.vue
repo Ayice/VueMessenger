@@ -13,41 +13,30 @@
 				<p>{{ allUser.username }}</p>
 			</router-link>
 		</div>
-		<Modal
-			v-if="showModal"
-			:title="modalTitle"
-			:text="modalText"
-			:action="modalFunc"
-			:data="modalData"
-		/>
 	</section>
 </template>
 
 <script>
-	import { mapState, mapActions } from 'vuex'
-	import Modal from './Modal'
+	import { mapState, mapActions, mapMutations } from 'vuex'
 	export default {
 		props: ['id'],
-		components: { Modal },
 		name: 'DisplayUsers',
 		data() {
-			return {
-				showModal: false,
-				modalText: '',
-				modalTitle: '',
-				modalFunc: '',
-				modalData: null
-			}
+			return {}
 		},
 
 		methods: {
+			...mapMutations(['setModal', 'setShowModal']),
 			addFriend(newFriend) {
-				this.showModal = true
-				this.modalText =
-					'Do you want to add ' + newFriend.username + ' as a friend?'
-				this.modalTitle = 'Add a friend!'
-				this.modalFunc = 'addNewFriend'
-				this.modalData = newFriend
+				let modalContent = {
+					modalText:
+						'Do you want to add ' + newFriend.username + ' as a friend?',
+					modalTitle: 'Add a friend!',
+					modalFunc: 'addNewFriend',
+					modalData: newFriend
+				}
+				this.setShowModal(true)
+				this.setModal(modalContent)
 			}
 		},
 
@@ -65,9 +54,9 @@
 <style lang="scss">
 	.users {
 		width: 20%;
-		position: relative;
 
 		.user {
+			position: relative;
 			display: flex;
 			flex-direction: row;
 			padding: 1em 0;

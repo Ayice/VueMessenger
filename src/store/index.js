@@ -21,6 +21,8 @@ export default new Vuex.Store({
 			email: '',
 			avatarUrl: ''
 		},
+		modal: null,
+		showModal: false,
 		newAvatar: null,
 		currentChatroom: {},
 		currentChatroomMessages: [],
@@ -97,6 +99,14 @@ export default new Vuex.Store({
 
 		setNewAvatarUrl(state, avatarUrl) {
 			state.newUser.avatarUrl = avatarUrl
+		},
+
+		setModal(state, modalData) {
+			console.log(modalData)
+			state.modal = { ...modalData }
+		},
+		setShowModal(state, value) {
+			state.showModal = value
 		}
 	},
 
@@ -432,7 +442,7 @@ export default new Vuex.Store({
 		//  Handling new friend request
 		addNewFriend({ commit, state }, friendId) {
 			commit('setStatus', 'loading')
-
+			console.log('friendId')
 			db.collection('contacts')
 				// Using current user's id to find the right doc
 				.doc(state.user.id)
