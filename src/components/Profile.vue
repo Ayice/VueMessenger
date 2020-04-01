@@ -1,10 +1,10 @@
 <template>
 	<section class="profile" v-if="userProfile !== null">
-		<div class="profile-pic" :class="showModal ? 'blur' : ''">
+		<div class="profile-pic">
 			<img :src="userProfile.avatarUrl" alt="profile pic" />
 		</div>
 
-		<div :class="showModal ? 'blur' : ''" class="profile-info">
+		<div class="profile-info">
 			<h1>{{ userProfile.name }}</h1>
 			<h2>aka. {{ userProfile.username }}</h2>
 			<router-link :to="'/update-profile/' + user.id"
@@ -13,9 +13,8 @@
 
 			<Friends v-if="userProfile.id === user.id" :remove="true" />
 		</div>
-		<DisplayUsers v-on:showModal="showModal = true" />
-
-		<div :class="showModal ? 'blur' : ''">
+		<div class="right">
+			<DisplayUsers v-on:showModal="showModal = true" />
 			<p>Chatrooms you're a member of</p>
 			<Chatrooms class="chatrooms" v-if="userProfile.id === user.id" />
 		</div>
@@ -63,10 +62,11 @@
 	}
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 	.blur {
 		filter: blur(20px);
 	}
+
 	.profile {
 		display: flex;
 		flex-direction: row;
@@ -87,7 +87,7 @@
 		}
 
 		.users {
-			width: 20%;
+			width: 100%;
 		}
 	}
 </style>

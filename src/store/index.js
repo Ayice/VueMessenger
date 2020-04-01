@@ -402,7 +402,6 @@ export default new Vuex.Store({
 		checkUser({ commit }, user) {
 			// Returning promise, so our login action from earlier know
 			// when this is done.
-			console.log(user)
 			let id = ''
 
 			if (user.id) {
@@ -565,16 +564,16 @@ export default new Vuex.Store({
 			})
 		},
 
-		removeFriend({ commit, state }, friendId) {
+		removeFriend({ commit, state }, friend) {
 			commit('setStatus', 'loading')
 			db.collection('contacts')
 				.doc(state.user.id)
 				.update({
-					[friendId]: firebase.firestore.FieldValue.delete()
+					[friend.id]: firebase.firestore.FieldValue.delete()
 				})
 				.then(() => {
 					db.collection('contacts')
-						.doc(friendId)
+						.doc(friend.id)
 						.update({
 							[state.user.id]: firebase.firestore.FieldValue.delete()
 						})
@@ -705,10 +704,10 @@ export default new Vuex.Store({
 				})
 		},
 
-		addToChatroom({ state, commit }, userId) {
+		addToChatroom({ state, commit }, user) {
 			commit('setStatus', 'loading')
 			db.collection('user-rooms')
-				.doc(userId)
+				.doc(user.id)
 				.set(
 					{
 						[state.currentChatroom.id]: true
@@ -720,7 +719,7 @@ export default new Vuex.Store({
 						.doc(state.currentChatroom.id)
 						.set(
 							{
-								[userId]: true
+								[user.id]: true
 							},
 							{ merge: true }
 						)
