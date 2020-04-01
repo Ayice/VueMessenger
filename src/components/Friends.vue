@@ -1,20 +1,22 @@
 <template>
 	<div class="friends">
 		<p>This is your friendlist</p>
-
-		<div class="friend" v-for="friend in friends" :key="friend.id">
-			<router-link :to="'/profile/' + friend.id">{{friend.username}} | {{friend.email}}</router-link>
-
-			<span v-if="remove" class="remove" @click="removeFriend(friend.id)">X</span>
-			<span v-else class="add" @click="addToChatroom(friend.id)">+</span>
-		</div>
+		<UserView
+			v-for="friend in friends"
+			:key="friend.id"
+			:chatroom="false"
+			:remove="true"
+			:user="friend"
+		/>
 	</div>
 </template>
 
 <script>
 	import { mapState, mapActions } from 'vuex'
+	import UserView from './UserView'
 	export default {
 		name: 'Friends',
+		components: { UserView },
 		props: ['remove'],
 		data() {
 			return {}
@@ -26,19 +28,10 @@
 	}
 </script>
 
-<style lang="scss" scoped>
-	.friend {
-		align-items: center;
+<style lang="scss">
+	.friends {
 		display: flex;
-		flex-direction: row;
-
-		a {
-			margin: 0.5em 0;
-			width: 80%;
-		}
-
-		.add {
-			margin-left: auto;
-		}
+		flex-direction: column;
+		justify-content: center;
 	}
 </style>
