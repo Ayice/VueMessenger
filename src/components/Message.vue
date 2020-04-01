@@ -14,7 +14,7 @@
 	}
 </script>
 
-<style lang="scss" >
+<style lang="scss">
 	.message-container {
 		width: fit-content;
 		padding: 15px;
