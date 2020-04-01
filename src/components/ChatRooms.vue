@@ -1,7 +1,10 @@
-<template >
+<template>
 	<div v-if="user !== null">
-		<ChatroomShow v-for="chatroom in chatrooms" :key="chatroom.id" :chatroom="chatroom" />
-		<NewChatroom />
+		<ChatroomShow
+			v-for="chatroom in chatrooms"
+			:key="chatroom.id"
+			:chatroom="chatroom"
+		/>
 	</div>
 </template>
 
@@ -9,12 +12,11 @@
 	// import { db } from '../firebase/firebase'
 	import { mapState, mapActions } from 'vuex'
 
-	import NewChatroom from './NewChatroom'
 	import ChatroomShow from './ChatRoomShow'
 
 	export default {
 		name: 'Chatrooms',
-		components: { ChatroomShow, NewChatroom },
+		components: { ChatroomShow },
 		data() {
 			return {
 				// chatrooms: [],
@@ -47,5 +49,4 @@
 	}
 </script>
 
-<style>
-</style>
+<style></style>
