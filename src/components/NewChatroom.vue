@@ -13,7 +13,11 @@
 						name="chatroomName"
 						required
 					/>
-					<label :class="newChatroom !== '' ? 'not-empty' : ''" for="chatroomName">Chatroom Name</label>
+					<label
+						:class="newChatroom !== '' ? 'not-empty' : ''"
+						for="chatroomName"
+						>Chatroom Name</label
+					>
 				</div>
 
 				<button type="submit">Create Chatroom</button>
@@ -48,5 +52,4 @@
 	}
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>
