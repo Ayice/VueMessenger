@@ -16,12 +16,12 @@
 			:class="{ loading: status !== 'success' || showModal }"
 		>
 			<div class="nav">
-				<router-link to="/">Home</router-link>|
-				<router-link to="/signup" v-if="!user">Create User</router-link>|
+				<router-link to="/">Home</router-link> |
+				<router-link to="/signup" v-if="!user">Create User</router-link>
 				<router-link :to="'/profile/' + user.id" v-if="user !== null"
 					>Profile</router-link
-				>|
-				<router-link to="/about">About</router-link>
+				>
+				|
 
 				<button @click="logout">Log out</button>
 			</div>
@@ -52,6 +52,19 @@
 </script>
 
 <style lang="scss">
+	button {
+		cursor: pointer;
+		padding: 0.8em;
+		border: none;
+		border-radius: 5px;
+		background-color: #fff;
+		transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+
+		&:hover {
+			box-shadow: 2px 2px 4px 2px rgb(172, 170, 170);
+		}
+	}
+
 	.slide-in-enter-active {
 		transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
 	}

@@ -12,7 +12,7 @@
 					remove ? removeFriendModal(user) : null
 			"
 		>
-			<button v-if="remove">Remove</button>
+			<button v-if="remove">Remove friend</button>
 			<button v-else>Add friend</button>
 		</span>
 
