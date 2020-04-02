@@ -59,9 +59,10 @@
 		border-radius: 5px;
 		background-color: #fff;
 		transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+		box-shadow: 2px 2px 6px 2px rgb(172, 170, 170);
 
 		&:hover {
-			box-shadow: 2px 2px 4px 2px rgb(172, 170, 170);
+			box-shadow: 2px 2px 3px 1px rgb(172, 170, 170);
 		}
 	}
 
