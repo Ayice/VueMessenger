@@ -102,7 +102,6 @@ export default new Vuex.Store({
 		},
 
 		setModal(state, modalData) {
-			console.log(modalData)
 			state.modal = { ...modalData }
 		},
 		setShowModal(state, value) {
@@ -127,7 +126,6 @@ export default new Vuex.Store({
 					state.newUser.password
 				)
 				.then(async response => {
-					console.log(response)
 					const id = response.user.uid
 					newUserId = id
 					await dispatch('uploadAvatar', id)
@@ -165,16 +163,13 @@ export default new Vuex.Store({
 						profilePicRef
 							.getDownloadURL()
 							.then(url => {
-								console.log(url)
 								commit('setNewAvatarUrl', url)
 							})
 							.then(() => {
-								console.log("You've been resolved!")
 								resolve()
 							})
 					})
 					.catch(() => {
-						console.log("You've been rejected!")
 						reject()
 					})
 			})
@@ -245,7 +240,7 @@ export default new Vuex.Store({
 						.collection('users')
 						.doc(user.uid)
 						.delete()
-						.then(() => console.log('deleted from user collection'))
+
 					await db
 						.collection('user-rooms')
 						.doc(user.uid)
@@ -269,7 +264,6 @@ export default new Vuex.Store({
 							db.collection('user-rooms')
 								.doc(user.uid)
 								.delete()
-								.then(() => console.log('deleted from user-rooms'))
 						})
 						.then(() => {
 							db.collection('contacts')
@@ -283,16 +277,12 @@ export default new Vuex.Store({
 											.update({
 												[user.uid]: firebase.firestore.FieldValue.delete()
 											})
-											.then(() =>
-												console.log(`Deleted you as a friend from ${friendId}`)
-											)
 									})
 								})
 								.then(() => {
 									db.collection('contacts')
 										.doc(user.uid)
 										.delete()
-										.then(() => console.log('deleted from contacts collection'))
 								})
 								.then(() => {
 									db.collection('chatrooms')
@@ -303,18 +293,22 @@ export default new Vuex.Store({
 												doc.ref.delete()
 											})
 										})
-										.then(() =>
-											console.log('deleted chatrooms you were the founder of')
-										)
 								})
 								.then(() => {
-									user.delete().then(() => console.log('deleted from Auth'))
+									user.delete().then(() => {
+										alert('Your user have been deleted.')
+										commit('setStatus', 'success')
+									})
 								})
 						})
 				})
-				.catch(() => {})
-
-			commit('setStatus', 'success')
+				.catch(() => {
+					commit('setStatus', 'error')
+					commit(
+						'setErrorMsg',
+						'An error occurred while deleting your user. Try again in a moment'
+					)
+				})
 		},
 
 		checkUserName({ commit }, username) {
@@ -347,7 +341,7 @@ export default new Vuex.Store({
 						commit('setStatus', 'error')
 						commit(
 							'setErrorMsg',
-							'An error occured while updating your email. Try again in a moment'
+							'An error occurred while updating your email. Try again in a moment'
 						)
 					})
 			})
@@ -365,7 +359,7 @@ export default new Vuex.Store({
 					commit('setStatus', 'error')
 					commit(
 						'setErrorMsg',
-						'An error occured trying to update your password. Try again in a moment'
+						'An error occurred trying to update your password. Try again in a moment'
 					)
 				})
 		},
@@ -441,7 +435,6 @@ export default new Vuex.Store({
 		//  Handling new friend request
 		addNewFriend({ commit, state }, friendId) {
 			commit('setStatus', 'loading')
-			console.log('friendId')
 			db.collection('contacts')
 				// Using current user's id to find the right doc
 				.doc(state.user.id)
@@ -470,12 +463,11 @@ export default new Vuex.Store({
 				.then(() => {
 					commit('setStatus', 'success')
 				})
-				.catch(err => {
-					console.log(err)
+				.catch(() => {
 					commit('setStatus', 'error')
 					commit(
 						'setErrorMsg',
-						`An error occured when trying to add ${friendId.username} to your friendlist. Try again in a moment`
+						`An error occurred when trying to add ${friendId.username} to your friendlist. Try again in a moment`
 					)
 				})
 		},
@@ -508,7 +500,7 @@ export default new Vuex.Store({
 									commit('setStatus', 'error')
 									commit(
 										'setErrorMsg',
-										'An internal error occured try to log on again'
+										'An internal error occurred try to log on again'
 									)
 									reject()
 								})
@@ -581,13 +573,12 @@ export default new Vuex.Store({
 				.then(() => {
 					commit('setStatus', 'success')
 				})
-				.catch(err => {
+				.catch(() => {
 					commit('setStatus', 'error')
 					commit(
 						'setErrorMsg',
-						'An error occured when trying to remove the user from your friendlist. Try again in a moment'
+						'An error occurred when trying to remove the user from your friendlist. Try again in a moment'
 					)
-					console.log(err)
 				})
 		},
 
@@ -659,7 +650,7 @@ export default new Vuex.Store({
 					commit('setStatus', 'error')
 					commit(
 						'setErrorMsg',
-						'An error occured when trying to remove the chatroom from your chatroomlist. Try again in a moment'
+						'An error occurred when trying to remove the chatroom from your chatroomlist. Try again in a moment'
 					)
 				})
 		},
@@ -690,11 +681,7 @@ export default new Vuex.Store({
 					db.collection('members')
 						.doc(value.id)
 						.delete()
-						.then(() => {
-							console.log('Chatroom deleted')
-						})
 				})
-
 				.catch(() => {
 					commit('setStatus', 'error')
 					commit(
@@ -756,8 +743,7 @@ export default new Vuex.Store({
 										commit('setMembers', membersArray)
 									}
 								})
-								.catch(error => {
-									console.log(error)
+								.catch(() => {
 									reject()
 									commit('setStatus', 'error')
 									commit(
@@ -834,7 +820,7 @@ export default new Vuex.Store({
 					commit('setStatus', 'error')
 					commit(
 						'setErrorMsg',
-						'An error occured trying to find the chatroom. Try again in a moment'
+						'An error occurred trying to find the chatroom. Try again in a moment'
 					)
 				})
 		},
