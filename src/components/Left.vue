@@ -32,5 +32,9 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
+
+		.left-chatroom-container {
+			width: 60%;
+		}
 	}
 </style>
