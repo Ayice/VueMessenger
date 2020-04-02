@@ -52,6 +52,10 @@
 </script>
 
 <style lang="scss">
+	body {
+		min-height: 100vh;
+	}
+
 	button {
 		cursor: pointer;
 		padding: 0.8em;
@@ -71,7 +75,7 @@
 	}
 
 	.slide-in-enter,
-	.slide-in-leave-to {
+	.slide-in-leave {
 		transform: translateY(20px);
 	}
 

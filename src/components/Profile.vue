@@ -79,6 +79,7 @@
 
 		&-pic {
 			width: 20%;
+			margin-top: 20px;
 
 			img {
 				width: 90%;
@@ -87,7 +88,16 @@
 		}
 
 		&-info {
+			display: flex;
+			flex-direction: row;
 			width: 50%;
+			height: fit-content;
+			justify-content: center;
+			flex-wrap: wrap;
+
+			& > * {
+				flex: 0 0 100%;
+			}
 		}
 
 		.users {

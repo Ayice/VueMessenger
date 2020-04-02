@@ -9,7 +9,7 @@
 		<button @click="createNewChatroom = !createNewChatroom">
 			Create new Chatroom
 		</button>
-		<transition name="slide-in">
+		<transition name="slide-down">
 			<NewChatroom v-if="createNewChatroom" />
 		</transition>
 	</div>
@@ -59,12 +59,12 @@
 </script>
 
 <style lang="scss">
-	.slide-in-enter-active {
+	.slide-down-enter-active {
 		transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
 	}
 
-	.slide-in-enter,
-	.slide-in-leave-to {
+	.slide-down-enter,
+	.slide-down-leave {
 		transform: translateY(-20px);
 	}
 </style>
