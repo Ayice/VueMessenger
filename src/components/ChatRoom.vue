@@ -185,7 +185,6 @@
 				&:hover {
 					svg {
 						cursor: pointer;
-
 						animation-name: paperPlane;
 						animation-duration: 0.3s;
 					}

@@ -63,6 +63,10 @@
 </script>
 
 <style lang="scss">
+	.right {
+		width: 30%;
+	}
+
 	.blur {
 		filter: blur(20px);
 	}
@@ -77,7 +81,7 @@
 			width: 20%;
 
 			img {
-				width: 75%;
+				width: 90%;
 				height: auto;
 			}
 		}
