@@ -2,29 +2,27 @@
 	<div class="chatroom" v-if="currentChatroom">
 		<h1>{{ currentChatroom.name }}</h1>
 
-		<div class="message-stuff">
-			<transition-group tag="div" name="slide" class="messages-container">
-				<Message
-					v-for="message in currentChatroomMessages"
-					:key="message.id"
-					:class="[message.senderId === user.id ? 'author' : 'receiver']"
-					:message="message"
-				/>
-			</transition-group>
+		<transition-group tag="div" name="slide" class="messages-container">
+			<Message
+				v-for="message in currentChatroomMessages"
+				:key="message.id"
+				:class="[message.senderId === user.id ? 'author' : 'receiver']"
+				:message="message"
+			/>
+		</transition-group>
 
-			<div class="new-message-container">
-				<div
-					class="new-message"
-					:class="newMessage !== '' ? 'hide-placeholder' : ''"
-					@keydown.enter.exact.prevent="sendMsg()"
-					@input="handleChange($event)"
-					contenteditable="true"
-				></div>
+		<div class="new-message-container">
+			<div
+				class="new-message"
+				:class="newMessage !== '' ? 'hide-placeholder' : ''"
+				@keydown.enter.exact.prevent="sendMsg()"
+				@input="handleChange($event)"
+				contenteditable="true"
+			></div>
 
-				<span class="send-icon" @click="sendMsg">
-					<PaperPlane />
-				</span>
-			</div>
+			<span class="send-icon" @click="sendMsg">
+				<PaperPlane />
+			</span>
 		</div>
 
 		<div class="chat-options-div" :class="showAddMenu ? 'show' : ''">
