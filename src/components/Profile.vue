@@ -5,12 +5,13 @@
 		</div>
 
 		<div class="profile-info">
-			<h1>{{ userProfile.name }}</h1>
-			<h2>aka. {{ userProfile.username }}</h2>
-			<router-link :to="'/update-profile/' + user.id"
-				>Update your profile</router-link
-			>
-
+			<span>
+				<h1>{{ userProfile.name }}</h1>
+				<h2>aka. {{ userProfile.username }}</h2>
+				<router-link :to="'/update-profile/' + user.id"
+					>Update your profile</router-link
+				>
+			</span>
 			<Friends v-if="userProfile.id === user.id" :remove="true" />
 		</div>
 		<div class="right">
@@ -89,14 +90,28 @@
 
 		&-info {
 			display: flex;
-			flex-direction: row;
+			flex-direction: column;
 			width: 50%;
 			height: fit-content;
-			justify-content: center;
+			align-items: center;
 			flex-wrap: wrap;
 
-			& > * {
-				flex: 0 0 100%;
+			& > span {
+				width: 75%;
+
+				h1 {
+					margin-bottom: 0;
+				}
+				h2 {
+					margin-top: 0;
+				}
+			}
+
+			.friends {
+				width: 75%;
+			}
+			.friend {
+				width: 100%;
 			}
 		}
 
