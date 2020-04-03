@@ -27,9 +27,7 @@
 		components: { ChatroomShow, NewChatroom },
 		data() {
 			return {
-				// chatrooms: [],
-				createNewChatroom: false,
-				inputs: [{ name: 'dfsa' }, { id: '' }]
+				createNewChatroom: false
 			}
 		},
 
