@@ -588,6 +588,36 @@ export default new Vuex.Store({
 		 *
 		 */
 
+		/**
+		 *
+		 *
+		 * Todo: Create connection to user-user-chat collection
+		 * Hente fra state.user.id doc
+		 * så collection friend.id
+		 * her er alle beskeder
+		 * Først se om beskederne allerede eksitsterer.
+		 * Hvis ikke Create
+		 *
+		 * Ellers hent dem ned
+		 * */
+		friendChat({ state }, friend) {
+			db.collection('user-user-chat')
+				.doc(state.user.id)
+				.collection(friend.id)
+				.onSnapshot(querySnapshot => {
+					if (!querySnapshot.empty) {
+						querySnapshot.docs.forEach(message => {
+							console.log(message.data())
+						})
+					} else {
+						console.log(querySnapshot, 'else')
+					}
+				})
+		},
+		//  Todo: Create messages and insert them into both collections
+		//   I vennens collection
+		//   Og i din collection
+
 		addNewChatroom({ commit, state }) {
 			let newChatroomId = ''
 			commit('setStatus', 'loading')

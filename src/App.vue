@@ -22,7 +22,9 @@
 					>Profile</router-link
 				>
 				|
-
+				<button
+					@click="friendChat({ id: 'XFktRW29ABaX1o8zNW61rTl5mAN2' })"
+				></button>
 				<button @click="logout">Log out</button>
 			</div>
 			<transition name="slide-in">
@@ -43,7 +45,7 @@
 			...mapState(['user', 'status', 'errorMsg', 'showModal'])
 		},
 		methods: {
-			...mapActions(['logout']),
+			...mapActions(['logout', 'friendChat']),
 			removeError() {
 				this.$store.commit('setStatus', 'success')
 			}
