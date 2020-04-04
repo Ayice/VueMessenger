@@ -4,10 +4,10 @@
 		:to="{ name: 'Chatroom', params: { id: chatroom.id } }"
 		tag="div"
 	>
-		<span class="chatroom-img">
+		<span class="chatroom-img" v-if="chatroom.members[0].avatarUrl">
 			<img
-				:src="member.avatarUrl"
 				v-for="member in chatroom.members"
+				:src="member.avatarUrl"
 				:alt="member.username"
 				:key="member.id"
 			/>
