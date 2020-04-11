@@ -8,9 +8,19 @@
 			<span>
 				<h1>{{ userProfile.name }}</h1>
 				<h2>aka. {{ userProfile.username }}</h2>
-				<router-link :to="'/update-profile/' + user.id"
-					>Update your profile</router-link
-				>
+				<div v-if="userProfile.id !== user.id">
+					<router-link :to="'/user-chat/' + userProfile.id">
+						Start chat</router-link
+					>
+				</div>
+
+				<div v-if="userProfile.id === user.id">
+					<br />
+
+					<router-link :to="'/update-profile/' + user.id"
+						>Update your profile</router-link
+					>
+				</div>
 			</span>
 			<Friends v-if="userProfile.id === user.id" :remove="true" />
 		</div>
