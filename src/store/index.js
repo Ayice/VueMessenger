@@ -590,7 +590,6 @@ export default new Vuex.Store({
 
 		/*
 		 *
-		 *
 		 * Todo: Create connection to user-user-chat collection
 		 * Hente fra state.user.id doc
 		 * så collection friend.id
@@ -603,6 +602,7 @@ export default new Vuex.Store({
 		 */
 
 		friendChat({ state, commit }, friend) {
+			commit('setStatus', 'loading')
 			db.collection('user-user-chat')
 				.doc(state.user.id)
 				.collection(friend.id)
@@ -618,8 +618,14 @@ export default new Vuex.Store({
 							id: friend.id,
 							name: friend.username
 						})
+						commit('setStatus', 'success')
 					} else {
-						console.log(querySnapshot, 'else')
+						commit('setCurrentChatroomMessages', [])
+						commit('setCurrentChatroom', {
+							id: friend.id,
+							name: friend.username
+						})
+						commit('setStatus', 'success')
 					}
 				})
 		},

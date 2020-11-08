@@ -41,6 +41,13 @@ const router = new Router({
 				import(/* webpackChunkName: "signup" */ '../components/SignUp.vue')
 		},
 		{
+			path: '/user-chat/:id',
+			name: 'UserChat',
+			props: true,
+			component: () =>
+				import(/* webpackChunkName: "chatroom" */ '../components/ChatRoom.vue')
+		},
+		{
 			path: '/profile/:id',
 			name: 'Profile',
 			props: true,

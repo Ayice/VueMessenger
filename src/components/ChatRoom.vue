@@ -55,7 +55,9 @@
 
 	export default {
 		name: 'Chatroom',
-		props: ['id'],
+		props: {
+			id: { type: String, required: true }
+		},
 		components: { PaperPlane, Message, UserView, GearsIcon },
 		data() {
 			return {
@@ -84,6 +86,7 @@
 						senderId: this.user.id,
 						createdAt: firebase.firestore.Timestamp.now()
 					})
+
 					.then(() => {
 						db.collection('chatrooms')
 							.doc(this.id)
@@ -229,16 +232,6 @@
 				position: relative;
 				height: 40px;
 				width: 40px;
-
-				svg {
-					transition: all 0.1s ease-in;
-				}
-
-				&:hover {
-					svg {
-						fill: rgb(197, 197, 197);
-					}
-				}
 			}
 		}
 

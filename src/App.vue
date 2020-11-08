@@ -22,10 +22,7 @@
 					>Profile</router-link
 				>
 				|
-				<button
-					@click="friendChat({ id: 'XFktRW29ABaX1o8zNW61rTl5mAN2' })"
-				></button>
-				<button @click="logout">Log out</button>
+				<button class="logout-button" @click="logout">Log out</button>
 			</div>
 			<transition name="slide-in">
 				<router-view />
@@ -38,7 +35,7 @@
 <script>
 	import { mapState, mapActions } from 'vuex'
 	import Modal from './components/Modal.vue'
-	// import Test from './compon ents/Test.vue'
+
 	export default {
 		components: { Modal },
 		computed: {
@@ -54,21 +51,32 @@
 </script>
 
 <style lang="scss">
+	@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500&display=swap');
+
 	body {
+		font-family: 'Noto Sans JP', sans-serif;
+		margin: 0;
 		min-height: 100vh;
 	}
 
+	.logout-button {
+		padding: 0;
+		box-shadow: none;
+		border: none;
+		&:hover {
+			background-color: #fff;
+		}
+	}
 	button {
 		cursor: pointer;
 		padding: 0.8em;
-		border: none;
-		border-radius: 5px;
+		border-radius: 3px;
 		background-color: #fff;
 		transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
-		box-shadow: 2px 2px 6px 2px rgb(172, 170, 170);
+		border: 1px solid #999;
 
 		&:hover {
-			box-shadow: 2px 2px 3px 1px rgb(172, 170, 170);
+			background-color: darken($color: #fff, $amount: 5);
 		}
 	}
 
@@ -84,9 +92,7 @@
 	.app {
 		font-size: 16px;
 		font-weight: 700;
-		max-width: 950px;
 		margin: 0 auto;
-		font-family: Avenir, Helvetica, Arial, sans-serif;
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
 
@@ -94,9 +100,10 @@
 	}
 
 	.nav {
-		text-align: center;
-		padding: 30px;
-
+		text-align: right;
+		box-shadow: 3px 0px 6px #bfbfbf;
+		margin-bottom: 12px;
+		padding: 12px 6px;
 		a {
 			font-weight: bold;
 			color: #2c3e50;

@@ -3,7 +3,10 @@
 		<defs />
 		<g id="Layer_2" data-name="Layer 2">
 			<g id="Layer_1-2" data-name="Layer 1">
-				<polygon class="cls-1" points="185.28 232 606.1 2.75 18.23 268.68 185.28 232" />
+				<polygon
+					class="cls-1"
+					points="185.28 232 606.1 2.75 18.23 268.68 185.28 232"
+				/>
 				<polyline
 					class="cls-1"
 					points="185.28 232 221.78 349.95 228.1 240.75 605.97 6.37 362.1 385.75 228.1 240.75 224.45 351.32 295.26 315.52"
@@ -20,7 +23,7 @@
 	}
 </script>
 
-<style lang="scss" scoped >
+<style lang="scss" scoped>
 	.cls-1 {
 		fill: #42b983;
 		stroke: #000;

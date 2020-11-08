@@ -83,6 +83,7 @@
 	}
 
 	.profile {
+		padding: 0 2%;
 		display: flex;
 		flex-direction: row;
 		justify-content: center;

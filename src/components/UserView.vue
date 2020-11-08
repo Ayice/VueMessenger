@@ -77,11 +77,10 @@
 		flex-direction: row;
 		padding: 0.3em;
 		border-radius: 5px;
-		box-shadow: 2px 5px 6px rgba(129, 129, 129, 0.4);
 		transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
 
 		&:hover {
-			box-shadow: 2px 5px 8px rgba(129, 129, 129, 0.8);
+			box-shadow: 2px 5px 6px rgba(129, 129, 129, 0.4);
 		}
 
 		.user-profile-pic {

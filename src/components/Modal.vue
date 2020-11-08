@@ -32,7 +32,6 @@
 		methods: {
 			...mapMutations(['setShowModal', 'setModal']),
 			handleClick(action, data) {
-				console.log(action)
 				this.$store.dispatch(action, data)
 			},
 
