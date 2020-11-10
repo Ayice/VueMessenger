@@ -75,7 +75,6 @@
 		align-items: center;
 		display: flex;
 		flex-direction: row;
-		padding: 0.3em;
 		border-radius: 5px;
 		transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
 

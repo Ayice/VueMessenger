@@ -1,33 +1,38 @@
 <template>
 	<section class="profile" v-if="userProfile !== null">
-		<div class="profile-pic">
-			<img :src="userProfile.avatarUrl" alt="profile pic" />
-		</div>
-
-		<div class="profile-info">
-			<span>
-				<h1>{{ userProfile.name }}</h1>
-				<h2>aka. {{ userProfile.username }}</h2>
-				<div v-if="userProfile.id !== user.id">
-					<router-link :to="'/user-chat/' + userProfile.id">
-						Start chat</router-link
-					>
+		<div class="info-friends-container">
+			<div class="profile-info">
+				<div class="profile-pic">
+					<img :src="userProfile.avatarUrl" alt="profile pic" />
 				</div>
-
-				<div v-if="userProfile.id === user.id">
-					<br />
-
+				<div v-if="userProfile.id === user.id" class="profile-edit">
 					<router-link :to="'/update-profile/' + user.id"
 						>Update your profile</router-link
 					>
 				</div>
-			</span>
-			<Friends v-if="userProfile.id === user.id" :remove="true" />
+				<span>
+					<h1>{{ userProfile.name }}</h1>
+					<h2>aka. {{ userProfile.username }}</h2>
+					<div v-if="userProfile.id !== user.id">
+						<router-link :to="'/user-chat/' + userProfile.id">
+							Start chat</router-link
+						>
+					</div>
+				</span>
+			</div>
+			<div class="friends-section">
+				<Friends v-if="userProfile.id === user.id" :remove="true" />
+			</div>
 		</div>
+
 		<div class="right">
 			<DisplayUsers v-on:showModal="showModal = true" />
-			<p>Chatrooms you're a member of</p>
-			<Chatrooms class="chatrooms" v-if="userProfile.id === user.id" />
+
+			<Chatrooms class="chatrooms" v-if="userProfile.id === user.id">
+				<template v-slot:title>
+					<p class="title">Chatrooms you're a member of</p>
+				</template>
+			</Chatrooms>
 		</div>
 	</section>
 </template>
@@ -74,6 +79,26 @@
 </script>
 
 <style lang="scss">
+	.info-friends-container {
+		margin-right: 12px;
+		width: 50%;
+	}
+
+	.friends-section {
+		border-radius: 3px;
+		background-color: #eeeded5e;
+		padding: 24px;
+		display: flex;
+		height: fit-content;
+		flex-wrap: wrap;
+		.friends {
+			width: 100%;
+		}
+		.friend {
+			padding: 0;
+			width: 100%;
+		}
+	}
 	.right {
 		width: 30%;
 	}
@@ -89,9 +114,15 @@
 		justify-content: center;
 		flex-wrap: wrap;
 
+		&-edit {
+			width: 50%;
+			align-self: flex-end;
+			justify-content: flex-end;
+			display: flex;
+		}
+
 		&-pic {
-			width: 20%;
-			margin-top: 20px;
+			width: 50%;
 
 			img {
 				width: 90%;
@@ -100,11 +131,12 @@
 		}
 
 		&-info {
+			margin-bottom: 12px;
+			background-color: #eeeded5e;
+			padding: 24px;
+			border-radius: 3px;
 			display: flex;
-			flex-direction: column;
-			width: 50%;
 			height: fit-content;
-			align-items: center;
 			flex-wrap: wrap;
 
 			& > span {
@@ -117,16 +149,12 @@
 					margin-top: 0;
 				}
 			}
-
-			.friends {
-				width: 75%;
-			}
-			.friend {
-				width: 100%;
-			}
 		}
 
 		.users {
+			border-radius: 3px;
+			background-color: #eeeded5e;
+			padding: 6px;
 			width: 100%;
 		}
 	}

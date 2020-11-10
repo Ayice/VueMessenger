@@ -22,7 +22,7 @@
 					>Profile</router-link
 				>
 				|
-				<button class="logout-button" @click="logout">Log out</button>
+				<a class="logout-button" @click.prevent="logout">Log out</a>
 			</div>
 			<transition name="slide-in">
 				<router-view />
@@ -52,6 +52,10 @@
 
 <style lang="scss">
 	@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500&display=swap');
+	.title {
+		font-size: 1.25rem;
+		margin: 0;
+	}
 
 	body {
 		font-family: 'Noto Sans JP', sans-serif;
@@ -60,6 +64,7 @@
 	}
 
 	.logout-button {
+		cursor: pointer;
 		padding: 0;
 		box-shadow: none;
 		border: none;
@@ -67,16 +72,20 @@
 			background-color: #fff;
 		}
 	}
+
 	button {
 		cursor: pointer;
 		padding: 0.8em;
 		border-radius: 3px;
-		background-color: #fff;
+		background-color: #03a9f4;
 		transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
-		border: 1px solid #999;
+		color: #fff;
+		font-weight: 600;
+		font-size: 16px;
+		border: 1px solid #03a9f4;
 
 		&:hover {
-			background-color: darken($color: #fff, $amount: 5);
+			background-color: lighten($color: #03a9f4, $amount: 10);
 		}
 	}
 

@@ -19,10 +19,7 @@
 				@input="handleChange($event)"
 				contenteditable="true"
 			></div>
-
-			<span class="send-icon" @click="sendMsg">
-				<PaperPlane />
-			</span>
+			<button class="send-button" @click="sendMsg">Send</button>
 		</div>
 
 		<div class="chat-options-div" :class="showAddMenu ? 'show' : ''">
@@ -48,7 +45,7 @@
 	import { db } from '../firebase/firebase'
 	import { mapState, mapActions } from 'vuex'
 	import firebase from 'firebase'
-	import PaperPlane from './icons/PaperPlane.vue'
+
 	import Message from './Message.vue'
 	import UserView from './UserView.vue'
 	import GearsIcon from './icons/GearsIcon.vue'
@@ -58,7 +55,7 @@
 		props: {
 			id: { type: String, required: true }
 		},
-		components: { PaperPlane, Message, UserView, GearsIcon },
+		components: { Message, UserView, GearsIcon },
 		data() {
 			return {
 				newMessage: '',
@@ -128,11 +125,12 @@
 
 <style lang="scss" scoped>
 	.chatroom {
+		background-color: #eeeded5e;
+		padding: 24px;
 		position: relative;
 		overflow: hidden;
 		min-height: 50vh;
 		width: 100%;
-		padding: 2em 1em 0;
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
@@ -170,6 +168,19 @@
 					&::after {
 						content: '';
 					}
+				}
+			}
+			.send-button {
+				width: 10%;
+				padding: 6px;
+				margin-left: 2%;
+				font-weight: 600;
+				font-size: 16px;
+				color: #fff;
+				background-color: #42b983;
+				border: 1px solid #42b983;
+				&:hover {
+					background-color: lighten($color: #42b983, $amount: 10);
 				}
 			}
 

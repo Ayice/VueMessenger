@@ -1,8 +1,8 @@
 <template>
 	<section class="left-section">
-		<h1 v-if="user">Pick a chatroom!</h1>
-
-		<Chatrooms />
+		<Chatrooms>
+			<template #title> <h1 v-if="user">Pick a chatroom!</h1></template>
+		</Chatrooms>
 		<Login />
 	</section>
 </template>
@@ -28,6 +28,9 @@
 </script>
 
 <style lang="scss">
+	.left-chatroom-container {
+		background-color: #eeeded5e;
+	}
 	.left-section {
 		display: flex;
 		flex-direction: column;

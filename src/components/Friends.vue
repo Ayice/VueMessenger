@@ -1,6 +1,6 @@
 <template>
 	<div class="friends">
-		<p>This is your friendlist</p>
+		<p>Friends</p>
 		<UserView
 			v-for="friend in friends"
 			:key="friend.id"

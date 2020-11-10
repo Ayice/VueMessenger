@@ -1,14 +1,20 @@
 <template>
 	<div v-if="user !== null" class="left-chatroom-container">
+		<slot name="title"></slot>
+
 		<ChatroomShow
 			v-for="chatroom in chatrooms"
 			:key="chatroom.id"
 			:chatroom="chatroom"
 		/>
-
-		<button @click="createNewChatroom = !createNewChatroom">
-			Create new Chatroom
-		</button>
+		<div class="button-container">
+			<button
+				class="create-chat-button"
+				@click="createNewChatroom = !createNewChatroom"
+			>
+				Create new Chatroom
+			</button>
+		</div>
 		<transition name="slide-down">
 			<NewChatroom v-if="createNewChatroom" />
 		</transition>
@@ -57,6 +63,19 @@
 </script>
 
 <style lang="scss">
+	.button-container {
+		display: flex;
+		justify-content: flex-end;
+	}
+	.left-chatroom-container {
+		border-radius: 3px;
+		width: 100%;
+		margin-top: 12px;
+		padding: 6px;
+	}
+	.create-chat-button {
+		margin-top: 24px;
+	}
 	.slide-down-enter-active {
 		transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
 	}

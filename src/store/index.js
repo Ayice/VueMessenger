@@ -931,6 +931,7 @@ export default new Vuex.Store({
 							// So we know the id is seen in both arrays
 							if (friend.id === user.id) {
 								count++
+
 								return
 							}
 						})

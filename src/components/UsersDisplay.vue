@@ -4,7 +4,7 @@
 	</div>
 
 	<section v-else class="users">
-		<h1>Friend Suggestions</h1>
+		<p class="title">Friend Suggestions</p>
 		<UserView
 			v-for="user in allUsers"
 			:key="user.id"

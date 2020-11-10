@@ -38,7 +38,18 @@
 	}
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+	.remove {
+		padding: 2%;
+		width: 20px;
+		margin: 0;
+		text-align: center;
+		border-radius: 50%;
+		transition: all 0.3s ease-in;
+		&:hover {
+			background-color: #bfbfbf57;
+		}
+	}
 	.chatroom-img {
 		display: block;
 		position: relative;
@@ -54,26 +65,20 @@
 	}
 
 	.chatroom-link {
+		justify-content: space-between;
 		padding: 0.5em;
 		border-radius: 5px;
 		cursor: pointer;
 		position: relative;
-		background-color: #ffffff;
 		color: #000000;
 		display: flex;
 		align-items: center;
 		flex-wrap: wrap;
-		margin-bottom: 2em;
 		text-decoration: none;
-		box-shadow: 2px 5px 6px rgba(129, 129, 129, 0.4);
 		transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
 
 		&:hover {
-			box-shadow: 2px 5px 8px rgba(129, 129, 129, 0.8);
-		}
-
-		& > * {
-			margin: 0 1em;
+			box-shadow: 2px 5px 6px rgba(129, 129, 129, 0.4);
 		}
 
 		.chatroom-text {
@@ -84,15 +89,8 @@
 				margin: 0;
 			}
 			.h2 {
-				text-align: center;
 				text-decoration: none;
 			}
-		}
-
-		.remove {
-			position: absolute;
-			right: 2%;
-			top: 50%;
 		}
 
 		.last-message {
