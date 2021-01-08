@@ -1,6 +1,6 @@
 <template>
 	<section v-if="id === user.id">
-		<section :class="showDeleteForm ? 'blur' : ''">
+		<section :class="[{ blur: showDeleteForm }, 'update-section']">
 			<form @submit.prevent="handleUpdate">
 				<fieldset>
 					<legend>Update your profile</legend>
@@ -45,13 +45,16 @@
 						>
 					</div>
 
-					<button type="submit">Update Profile</button>
+					<button type="submit" class="success">Update Profile</button>
 				</fieldset>
 			</form>
 
-			<button @click="updatePassword = !updatePassword">
-				Update your password
-			</button>
+			<div class="options-btns">
+				<button @click="updatePassword = !updatePassword">
+					Update your password
+				</button>
+				<button @click="showDeleteForm = true">Delete User</button>
+			</div>
 
 			<form
 				v-if="updatePassword"
@@ -94,7 +97,6 @@
 					<p>{{ errorMsg }}</p>
 				</fieldset>
 			</form>
-			<button @click="showDeleteForm = true">Delete User</button>
 		</section>
 
 		<section>
@@ -273,6 +275,28 @@
 			height: 100%;
 			border-bottom-color: #42b983;
 			border-left-color: #42b983;
+		}
+	}
+
+	.update-section {
+		display: flex;
+		justify-content: center;
+		flex-direction: column;
+		align-items: center;
+
+		form {
+			width: 50%;
+		}
+	}
+
+	.options-btns {
+		margin-top: 10px;
+		display: flex;
+		width: 50%;
+		justify-content: flex-start;
+
+		button {
+			margin-right: 10px;
 		}
 	}
 </style>

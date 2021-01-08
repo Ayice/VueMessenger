@@ -65,7 +65,7 @@
 <style lang="scss">
 	.button-container {
 		display: flex;
-		justify-content: flex-end;
+		justify-content: flex-start;
 	}
 	.left-chatroom-container {
 		border-radius: 3px;

@@ -20,7 +20,7 @@
 				{{ chatroom.lastMessage }}...
 			</p>
 		</div>
-		<span class="remove" @click="leaveChatroom(chatroom)">X</span>
+		<span class="remove" @click.stop="leaveChatroom(chatroom)">X</span>
 	</router-link>
 </template>
 

@@ -22,6 +22,7 @@
 
 <script>
 	import { mapMutations, mapActions } from 'vuex'
+
 	export default {
 		name: 'UserView',
 		props: ['user', 'remove', 'chatroom'],
@@ -115,13 +116,6 @@
 			right: 2%;
 			height: 100%;
 			z-index: 10;
-
-			button {
-				cursor: pointer;
-				width: auto;
-				font-weight: 400;
-				font-size: 0.7em;
-			}
 		}
 	}
 </style>

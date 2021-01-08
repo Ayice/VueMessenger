@@ -805,16 +805,20 @@ export default new Vuex.Store({
 		getChatrooms({ commit, state, dispatch }) {
 			commit('setStatus', 'loading')
 			db.collection('user-rooms')
-				// Only find chatrooms that our user is
-				// a part of
+				// Only find chatrooms that our user is a part of
 				.doc(state.user.id)
 				.onSnapshot(roomIds => {
 					const rooms = []
-					if (!roomIds.exists) {
+					console.log(roomIds.data())
+
+					if (!roomIds.exists || Object.keys(roomIds.data()).length === 0) {
 						commit('setChatrooms', rooms)
+
 						commit('setStatus', 'success')
+						console.log('hi')
 						return
 					}
+
 					let ids = Object.keys(roomIds.data())
 					// If there are no rooms return an empty array
 					// We need the keys(chatroom ids) to get the chatroom data

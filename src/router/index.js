@@ -26,11 +26,6 @@ const router = new Router({
 							/* webpackChunkName: "chatroom" */ '../components/ChatRoom.vue'
 						)
 				}
-				// {
-				// 	path: '/',
-				// 	component: RightSection,
-				// 	children: []
-				// }
 			]
 		},
 		{
@@ -70,17 +65,13 @@ const router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
-	if (to.path !== '/') {
-		if (!store.state.user) {
-			next('/')
-		}
+	if (to.path !== '/' && !store.state.user) {
+		next('/')
+	} else if (to.fullPath === '/signup' && store.state.user) {
+		next('/')
+	} else {
+		next()
 	}
-	if (to.fullPath === '/signup') {
-		if (store.state.user) {
-			next('/')
-		}
-	}
-	next()
 })
 
 export default router

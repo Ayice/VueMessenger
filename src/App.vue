@@ -51,14 +51,14 @@
 </script>
 
 <style lang="scss">
-	@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500&display=swap');
+	@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500&family=Roboto:wght@500&display=swap');
 	.title {
 		font-size: 1.25rem;
 		margin: 0;
 	}
 
 	body {
-		font-family: 'Noto Sans JP', sans-serif;
+		font-family: 'Poppins', sans-serif;
 		margin: 0;
 		min-height: 100vh;
 	}
@@ -74,18 +74,34 @@
 	}
 
 	button {
+		font-family: 'Roboto', sans-serif;
 		cursor: pointer;
-		padding: 0.8em;
+		padding: 2%;
 		border-radius: 3px;
 		background-color: #03a9f4;
 		transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
 		color: #fff;
-		font-weight: 600;
-		font-size: 16px;
-		border: 1px solid #03a9f4;
+		font-weight: 500;
+		font-size: 14px;
+		border: none;
+		outline: none;
 
 		&:hover {
 			background-color: lighten($color: #03a9f4, $amount: 10);
+		}
+
+		& ~ button {
+			margin-left: 5px;
+		}
+
+		&.success {
+			background-color: #42b983;
+			color: #fff;
+			box-shadow: 3px 4px 10px #333;
+
+			&:hover {
+				background-color: lighten($color: #42b983, $amount: 10);
+			}
 		}
 	}
 
@@ -174,7 +190,7 @@
 				border-radius: 0;
 				border: none;
 				border-bottom: 1px solid rgb(95, 95, 95);
-				font-size: 1.3em;
+				font-size: 1em;
 
 				&.not-empty {
 					border-bottom: 1px solid #42b983;
@@ -208,17 +224,6 @@
 					left: 2%;
 				}
 			}
-		}
-
-		button {
-			background-color: #42b983;
-			border: none;
-			outline: none;
-			color: #fff;
-			font-size: 1.3em;
-			border-radius: 5px;
-			cursor: pointer;
-			box-shadow: 3px 4px 10px #333;
 		}
 	}
 </style>

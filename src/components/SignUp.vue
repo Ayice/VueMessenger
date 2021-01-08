@@ -121,8 +121,12 @@
 	}
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 	label[for='avatar'] {
 		position: relative !important;
+	}
+	.form {
+		display: flex;
+		justify-content: center;
 	}
 </style>

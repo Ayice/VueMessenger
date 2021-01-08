@@ -33,6 +33,7 @@
 				<button type="submit">Log in</button>
 			</fieldset>
 		</form>
+		<router-link :to="{ name: 'SignUp' }">Create user</router-link>
 	</section>
 </template>
 
@@ -57,4 +58,8 @@
 	}
 </script>
 
-<style></style>
+<style>
+	.login {
+		width: 100%;
+	}
+</style>

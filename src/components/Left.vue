@@ -1,7 +1,13 @@
 <template>
 	<section class="left-section">
 		<Chatrooms>
-			<template #title> <h1 v-if="user">Pick a chatroom!</h1></template>
+			<template #title>
+				<h3 v-if="user && chatrooms.length">Pick a chatroom!</h3>
+				<h3 v-else-if="user && !chatrooms.length">
+					You are not in any chatrooms yet. <br />
+					Create one and add your friends!
+				</h3>
+			</template>
 		</Chatrooms>
 		<Login />
 	</section>
@@ -22,7 +28,7 @@
 			return {}
 		},
 		computed: {
-			...mapState(['user'])
+			...mapState(['user', 'chatrooms'])
 		}
 	}
 </script>
