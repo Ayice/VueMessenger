@@ -2,7 +2,7 @@
 	<section class="form">
 		<form @submit.prevent="addNewUser">
 			<fieldset>
-				<legend>Sign up</legend>
+				<legend>Create User</legend>
 
 				<div class="input-control">
 					<input
@@ -62,10 +62,10 @@
 
 				<div class="input-control">
 					<input type="file" name="avatar" id="avatar" @change="avatarUpload" />
-					<label for="avatar">Upload profile Picture</label>
+					<label for="avatar">Profile Picture</label>
 				</div>
 
-				<button type="submit">Create user</button>
+				<button class="success" type="submit">Create user</button>
 			</fieldset>
 		</form>
 	</section>
@@ -128,5 +128,12 @@
 	.form {
 		display: flex;
 		justify-content: center;
+
+		form {
+			fieldset {
+				margin: 0 auto;
+				width: 75%;
+			}
+		}
 	}
 </style>

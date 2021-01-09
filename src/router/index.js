@@ -65,13 +65,19 @@ const router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
-	if (to.path !== '/' && !store.state.user) {
-		next('/')
-	} else if (to.fullPath === '/signup' && store.state.user) {
-		next('/')
-	} else {
-		next()
+	if (to.fullPath === '/signup') {
+		if (store.state.user) {
+			next('/')
+		} else {
+			return next()
+		}
 	}
+	if (to.name !== 'Home') {
+		if (!store.state.user) {
+			return next('/')
+		}
+	}
+	next()
 })
 
 export default router

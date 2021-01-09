@@ -18,11 +18,11 @@
 			<div class="nav">
 				<router-link to="/">Home</router-link> |
 				<router-link to="/signup" v-if="!user">Create User</router-link>
-				<router-link :to="'/profile/' + user.id" v-if="user !== null"
+				<router-link :to="'/profile/' + user.id" v-if="user"
 					>Profile</router-link
 				>
 				|
-				<a class="logout-button" @click.prevent="logout">Log out</a>
+				<a class="logout-button" @click.prevent="logout" v-if="user">Log out</a>
 			</div>
 			<transition name="slide-in">
 				<router-view />
@@ -182,7 +182,7 @@
 		.input-control {
 			position: relative;
 			display: flex;
-			margin: 0.8em 0;
+			margin: 2em 0;
 			flex-direction: column-reverse;
 
 			input {
@@ -221,7 +221,7 @@
 					color: #42b983;
 					bottom: 80%;
 					font-size: 70%;
-					left: 2%;
+					left: 0%;
 				}
 			}
 		}

@@ -119,72 +119,85 @@
 	import { mapState, mapActions } from 'vuex'
 	import ReAuth from './ReAuth'
 	export default {
-		props: ['id'],
-		components: { ReAuth },
-		data() {
-			return {
-				form: {
-					name: '',
-					email: '',
-					username: ''
-				},
-				showDeleteForm: false,
-				updatePassword: false,
-				confirmPassword: '',
-				password: '',
-				passwordError: ''
-			}
-		},
+	  props: ['id'],
+	  components: { ReAuth },
+	  data() {
+	    return {
+	      form: {
+	        name: '',
+	        email: '',
+	        username: ''
+	      },
+	      showDeleteForm: false,
+	      updatePassword: false,
+	      confirmPassword: '',
+	      password: '',
+	      passwordError: ''
+	    }
+	  },
+	  computed: {
+	    ...mapState(['user']),
 
-		methods: {
-			handleCancelRemove() {
-				this.showDeleteForm = false
-			},
-			...mapActions(['updateUser', 'updateUserPassword']),
-			handleUpdate() {
-				const userUpdateData = {}
-				let count = 0
-				for (const key in this.form) {
-					count++
-					const element = this.form[key]
-					if (element !== '') {
-						userUpdateData[key] = element
-					}
-					if (count === Object.keys(this.form).length) {
-						this.updateUser(userUpdateData)
-						this.form.name = ''
-						this.form.username = ''
-						this.form.email = ''
-					}
-				}
-			},
+	    samePassword() {
+	      if (this.password !== '') {
+	        return this.password === this.confirmPassword
+	      } else {
+	        return false
+	      }
+	    },
 
-			handleUpdatePassword() {
-				if (this.samePassword) {
-					this.updateUserPassword(this.confirmPassword)
-				}
-			}
-		},
+	    errorMsg() {
+	      if (this.confirmPassword !== '' && !this.samePassword) {
+	        return 'The two passwords are not identical'
+	      } else {
+	        return ''
+	      }
+	    }
+	  },
+	   mounted() {
+	     this.fillInputs()
+	   },
 
-		computed: {
-			...mapState(['user']),
+	  methods: {
+	     ...mapActions(['updateUser', 'updateUserPassword']),
+	     fillInputs() {
+	       this.form.email = this.user.email
+	       this.form.username = this.user.username
+	       this.form.name = this.user.name
+	     },
+	    handleCancelRemove() {
+	      this.showDeleteForm = false
+	    },
+	    handleChange(event, inputName){
+	      this.form[inputName] = event;
+	    },
+	    handleUpdate() {
+	      const userUpdateData = {}
+	      let count = 0
+	      for (const key in this.form) {
+	        count++;
 
-			samePassword() {
-				if (this.password !== '') {
-					return this.password === this.confirmPassword
-				} else {
-					return false
-				}
-			},
+	        const element = this.form[key]
 
-			errorMsg() {
-				if (this.confirmPassword !== '' && !this.samePassword) {
-					return 'The two passwords are not identical'
-				} else {
-					return ''
-				}
-			}
-		}
+	        if (element !== '') {
+	          userUpdateData[key] = element
+	        }
+
+	        if (count === Object.keys(this.form).length) {
+	          this.updateUser(userUpdateData)
+	          this.form.name = ''
+	          this.form.username = ''
+	          this.form.email = ''
+	        }
+	      }
+	    },
+	    handleUpdatePassword() {
+	      if (this.samePassword) {
+	        this.updateUserPassword(this.confirmPassword)
+	      }
+	    }
+	  },
+
 	}
 </script>
 

@@ -809,13 +809,11 @@ export default new Vuex.Store({
 				.doc(state.user.id)
 				.onSnapshot(roomIds => {
 					const rooms = []
-					console.log(roomIds.data())
 
 					if (!roomIds.exists || Object.keys(roomIds.data()).length === 0) {
 						commit('setChatrooms', rooms)
 
 						commit('setStatus', 'success')
-						console.log('hi')
 						return
 					}
 
